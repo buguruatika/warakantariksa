@@ -1,0 +1,1704 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Misi Penjelajah Antariksa: Ekspedisi Satuan Berat</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+      background-color: #020617;
+      /* Background Luar Angkasa Imgur Tajam (tanpa blur) */
+      background-image: linear-gradient(rgba(2, 6, 23, 0.65), rgba(2, 6, 23, 0.75)), url('https://i.imgur.com/Xd0njCu.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+    }
+    .heading-font {
+      font-family: 'Orbitron', sans-serif;
+    }
+    .space-glass {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .space-glass-p1 {
+      background: rgba(14, 34, 61, 0.82);
+      border: 2px solid rgba(56, 189, 248, 0.6);
+      box-shadow: 0 0 20px rgba(14, 165, 233, 0.25);
+    }
+    .space-glass-p2 {
+      background: rgba(61, 28, 14, 0.82);
+      border: 2px solid rgba(251, 146, 60, 0.6);
+      box-shadow: 0 0 20px rgba(249, 115, 22, 0.25);
+    }
+    @keyframes turnPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 14px currentColor; }
+      50% { transform: scale(1.02); box-shadow: 0 0 26px currentColor; }
+    }
+    .active-turn-p1 {
+      animation: turnPulse 2s infinite ease-in-out;
+      border-color: #38bdf8 !important;
+      color: #38bdf8;
+    }
+    .active-turn-p2 {
+      animation: turnPulse 2s infinite ease-in-out;
+      border-color: #fb923c !important;
+      color: #fb923c;
+    }
+    .btn-hover-scale:hover {
+      transform: scale(1.03);
+    }
+    /* Animasi Melayang untuk Robot Warak */
+    @keyframes floatWarak {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    .animate-float-warak {
+      animation: floatWarak 4s ease-in-out infinite;
+    }
+    /* Animasi Glow Berkedip untuk Menu yang Terbuka */
+    @keyframes pulseCardGlow {
+      0%, 100% { box-shadow: 0 0 10px rgba(251, 191, 36, 0.2); border-color: rgba(251, 191, 36, 0.4); }
+      50% { box-shadow: 0 0 25px rgba(251, 191, 36, 0.8); border-color: rgba(251, 191, 36, 1); }
+    }
+    .pulse-card {
+      animation: pulseCardGlow 2s infinite ease-in-out !important;
+    }
+    /* Efek Laser */
+    @keyframes laserZap {
+      0% { opacity: 0; transform: scaleX(0.2); background-color: #fff; }
+      50% { opacity: 1; transform: scaleX(1); background-color: #fca5a5; }
+      100% { opacity: 0; transform: scaleX(0.2); background-color: transparent; }
+    }
+  </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col relative overflow-x-hidden">
+
+  <!-- LAPISAN PEMBUKA (UNLOCK AUDIO BROWSER) - Gambar Tajam -->
+  <div id="audio-unlock-overlay" class="fixed inset-0 z-[100] flex flex-col items-center justify-center space-y-6 transition-opacity duration-500" style="background-image: url('https://i.imgur.com/Xd0njCu.png'); background-size: cover; background-position: center; background-attachment: fixed; background-repeat: no-repeat;">
+    <!-- Lapisan Gelap Ringan -->
+    <div class="absolute inset-0 bg-slate-950/60 z-0"></div>
+    <div class="relative z-10 flex flex-col items-center justify-center space-y-6">
+      <img src="https://i.imgur.com/qTQOPGx.png" alt="Robot Warak" class="w-48 h-48 animate-float-warak drop-shadow-[0_0_35px_rgba(56,189,248,0.9)]" />
+      <h2 class="heading-font text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-100 to-amber-300 text-center px-4 drop-shadow-lg">
+        PUSAT KOMANDO ANTARIKSA
+      </h2>
+      <p class="text-slate-100 font-medium text-sm sm:text-base max-w-md text-center px-6 leading-relaxed drop-shadow-md">
+        Sistem komunikasi suara sedang tertidur. Klik tombol di bawah untuk membangunkan Robot Warak dan mengaktifkan audio!
+      </p>
+      <button onclick="unlockGameSystem()" class="mt-4 px-8 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black text-sm sm:text-base tracking-wide shadow-[0_0_25px_rgba(6,182,212,0.8)] transition transform hover:scale-105 flex items-center gap-2 cursor-pointer">
+        <span>Aktifkan Sistem Warak</span> 🚀
+      </button>
+    </div>
+  </div>
+
+  <!-- LAYAR DARURAT BAHAN BAKAR (Tampil Setelah Menang Solo) -->
+  <div id="fuel-emergency-overlay" class="fixed inset-0 z-[200] flex flex-col items-center justify-center space-y-6 transition-opacity duration-500 bg-slate-950/95 hidden">
+    <img src="https://i.imgur.com/qTQOPGx.png" alt="Robot Warak" class="w-48 h-48 animate-float-warak drop-shadow-[0_0_40px_rgba(225,29,72,0.9)]" />
+    <h2 class="heading-font text-3xl md:text-5xl font-black text-rose-500 text-center px-4 animate-pulse drop-shadow-lg">
+      PERINGATAN: BAHAN BAKAR KOSONG!
+    </h2>
+    <p class="text-slate-200 text-sm sm:text-base max-w-lg text-center px-6 leading-relaxed">
+      Roket kehabisan tenaga untuk kembali ke Bumi! Kita butuh bahan bakar darurat secepatnya. Segera temui Robot Warak di Stasiun GEM luar untuk memilah sampah daur ulang menjadi bahan bakar!
+    </p>
+    <a href="https://gemini.google.com/gem/1yTVsRvnzPxOo0nnoyLj0BiC6DHlEmtbv?usp=sharing" target="_blank" rel="noopener noreferrer" class="mt-4 px-8 py-4 rounded-2xl bg-gradient-to-r from-rose-600 to-red-700 hover:from-rose-500 hover:to-red-600 text-white font-black text-sm sm:text-base tracking-wide shadow-[0_0_30px_rgba(225,29,72,0.8)] transition transform hover:scale-105 flex items-center gap-2 cursor-pointer">
+      <span>Menuju Stasiun GEM Warak</span> 🚀
+    </a>
+  </div>
+
+  <!-- Animasi Latar Bintang -->
+  <canvas id="starfield" class="fixed inset-0 pointer-events-none z-0 opacity-80"></canvas>
+
+  <header class="relative z-20 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-md sticky top-0">
+    <div class="max-w-6xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
+      <!-- Logo Game & Tombol Home -->
+      <div class="flex items-center gap-3 cursor-pointer group" onclick="duelGame.backToHomePortal()" title="Kembali ke Menu Utama">
+        <div class="w-10 h-10 rounded-2xl bg-sky-900/50 flex items-center justify-center text-xl shadow-lg shadow-cyan-500/30 overflow-hidden border border-cyan-500/40 group-hover:border-cyan-300 transition">
+          <img src="https://i.imgur.com/qTQOPGx.png" alt="Logo Warak" class="w-full h-full object-cover group-hover:scale-110 transition duration-300" />
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="heading-font text-sm sm:text-base font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-200 to-amber-300">
+              EKSPEDISI SATUAN BERAT
+            </h1>
+            <span class="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-sky-900/60 border border-sky-400/50 text-[10px] font-bold text-sky-200 group-hover:bg-cyan-500 group-hover:text-slate-950 transition shadow-sm">
+              🏠 HOME
+            </span>
+          </div>
+          <p class="text-[10px] sm:text-xs text-slate-400 font-medium">Bumi • Mars • Venus</p>
+        </div>
+      </div>
+
+      <!-- Papan Poin (Tampil saat main) -->
+      <div id="duel-scoreboard-header" class="hidden items-center gap-2 sm:gap-4">
+        <div id="p1-header-badge" class="flex items-center gap-2 bg-slate-900/80 border border-cyan-500/50 px-3 py-1 rounded-xl text-xs transition">
+          <span class="text-base">🚀</span>
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="p1-header-name" class="font-bold text-cyan-300">P1: -</span>
+              <span id="p1-header-lives" class="text-xs">❤️❤️❤️</span>
+            </div>
+            <div class="text-[10px] text-cyan-200/80"><span id="p1-header-score">0</span> Poin • <span id="p1-header-stars">0</span>⭐</div>
+          </div>
+        </div>
+        <div id="scoreboard-vs" class="heading-font text-xs font-black text-amber-400">VS</div>
+        <div id="p2-header-badge" class="flex items-center gap-2 bg-slate-900/80 border border-orange-500/50 px-3 py-1 rounded-xl text-xs transition">
+          <span class="text-base">🛸</span>
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="p2-header-name" class="font-bold text-orange-300">P2: -</span>
+              <span id="p2-header-lives" class="text-xs">❤️❤️❤️</span>
+            </div>
+            <div class="text-[10px] text-orange-200/80"><span id="p2-header-score">0</span> Poin • <span id="p2-header-stars">0</span>⭐</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tombol Audio -->
+      <div class="flex items-center gap-2">
+        <button id="speech-toggle-btn" onclick="soundNarrator.toggleVoice()" class="flex items-center gap-1.5 bg-sky-950/80 hover:bg-sky-900 border border-sky-400/50 px-3 py-1.5 rounded-xl text-xs font-bold transition text-sky-200 hover:text-white shadow">
+          <span id="voice-icon">🗣️</span> <span class="hidden md:inline" id="voice-status-text">Warak: ON</span>
+        </button>
+        <button id="bgm-toggle-btn" onclick="bgmPlayer.toggle()" class="flex items-center gap-1 bg-violet-950/80 hover:bg-violet-900 border border-violet-500/50 px-2.5 py-1.5 rounded-xl text-xs font-bold transition text-violet-200 hover:text-white shadow">
+          <span id="bgm-icon">🎵</span> <span class="hidden lg:inline" id="bgm-text">Musik: OFF</span>
+        </button>
+        <button id="audio-toggle-btn" onclick="soundFx.toggleMute()" class="w-8 h-8 rounded-xl bg-slate-900/80 border border-slate-700 flex items-center justify-center text-sm hover:border-cyan-400 transition">
+          <span id="audio-icon">🔊</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="relative z-10 flex-1 max-w-5xl w-full mx-auto p-4 md:p-6 flex flex-col justify-center">
+
+    <!-- PORTAL UTAMA: 4 TOMBOL MENU BERURUTAN -->
+    <section id="screen-home-portal" class="space-y-8 flex flex-col items-center justify-center py-6">
+      <div class="text-center space-y-4">
+        <img src="https://i.imgur.com/qTQOPGx.png" alt="Maskot Robot Warak" class="w-40 h-40 sm:w-52 sm:h-52 mx-auto object-contain drop-shadow-[0_0_25px_rgba(56,189,248,0.7)] hover:drop-shadow-[0_0_40px_rgba(56,189,248,1)] animate-float-warak cursor-pointer transition-all duration-300" title="Halo! Saya Robot Warak!" />
+        <div class="inline-block px-4 py-1.5 rounded-full bg-cyan-500/20 border border-cyan-400/50 text-cyan-300 font-bold text-xs uppercase tracking-widest shadow-lg shadow-cyan-500/20 backdrop-blur-sm mt-4">
+          Pusat Komando SDN Karanganyar Gunung 02
+        </div>
+        <h2 class="heading-font text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-100 to-amber-200 drop-shadow-md">
+          MISI PENJELAJAH ANTARIKSA
+        </h2>
+        <p class="text-slate-200 max-w-2xl mx-auto text-sm bg-slate-950/50 p-4 rounded-xl border border-slate-800/60 backdrop-blur-sm leading-relaxed">
+          <strong>Halo Kadet! Saya Robot Warak</strong>, diciptakan di Kota Semarang oleh Bu Guru Atika. Kita akan mengendarai roket berbahan bakar metana (dari olahan sampah Bumi) untuk memasang satelit masa depan! Ikuti urutan misi di bawah ini untuk memulai.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl mx-auto">
+        <!-- Menu 1: Tujuan Belajar (Awal Menyala) -->
+        <button id="btn-menu-tujuan" onclick="duelGame.openTujuan()" class="btn-hover-scale space-glass p-5 rounded-3xl border-2 border-blue-500 flex items-center gap-4 transition text-left group pulse-card">
+          <div class="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center text-3xl group-hover:bg-blue-500/40 transition">🎯</div>
+          <div>
+            <div class="font-black text-blue-300 text-lg">1. Tujuan Belajar</div>
+            <div class="text-[11px] text-slate-200">Baca capaian fase B & C.</div>
+          </div>
+        </button>
+
+        <!-- Menu 2: Materi Satuan (Terkunci) -->
+        <button id="btn-menu-materi" onclick="duelGame.openMateri()" class="opacity-50 grayscale cursor-not-allowed space-glass p-5 rounded-3xl border-2 border-slate-600 flex items-center gap-4 transition text-left group">
+          <div class="w-14 h-14 rounded-2xl bg-slate-500/20 flex items-center justify-center text-3xl transition" id="bg-icon-materi">
+            <span id="icon-materi" class="hidden">📖</span>
+            <span id="lock-materi">🔒</span>
+          </div>
+          <div>
+            <div class="font-black text-indigo-300 text-lg">2. Materi Satuan</div>
+            <div class="text-[11px] text-slate-400 font-semibold" id="desc-materi">Terkunci (Buka Tujuan Dulu)</div>
+          </div>
+        </button>
+
+        <!-- Menu 3: Chat Warak AI (Terkunci) -->
+        <button id="btn-menu-chat" onclick="duelGame.openChat()" class="opacity-50 grayscale cursor-not-allowed space-glass p-5 rounded-3xl border-2 border-slate-600 flex items-center gap-4 transition text-left group">
+          <div class="w-14 h-14 rounded-2xl bg-slate-500/20 flex items-center justify-center transition overflow-hidden p-1 border border-slate-500/30" id="bg-icon-chat">
+            <span id="icon-chat" class="hidden w-full h-full"><img src="https://i.imgur.com/qTQOPGx.png" alt="Warak" class="w-full h-full object-contain" /></span>
+            <span id="lock-chat" class="text-2xl">🔒</span>
+          </div>
+          <div>
+            <div class="font-black text-emerald-300 text-lg flex items-center gap-1.5">3. Tanya Warak</div>
+            <div class="text-[11px] text-slate-400 font-semibold" id="desc-chat">Terkunci (Buka Materi Dulu)</div>
+          </div>
+        </button>
+
+        <!-- Menu 4: Mulai Ekspedisi (Terkunci) -->
+        <button id="btn-menu-ekspedisi" onclick="duelGame.openEkspedisi()" class="opacity-50 grayscale cursor-not-allowed relative space-glass p-5 rounded-3xl border-2 border-slate-600 flex items-center gap-4 transition text-left group overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-r from-amber-500/20 to-orange-500/20 opacity-0 transition duration-500" id="bg-glow-ekspedisi"></div>
+          <div class="w-14 h-14 rounded-2xl bg-slate-600 flex items-center justify-center text-3xl transition" id="bg-icon-ekspedisi">
+             <span id="icon-ekspedisi" class="hidden animate-pulse">🚀</span>
+             <span id="lock-ekspedisi">🔒</span>
+          </div>
+          <div class="relative z-10">
+            <div class="font-black text-amber-300 text-lg">4. Mulai Ekspedisi</div>
+            <div class="text-[11px] text-slate-400 font-semibold" id="desc-ekspedisi">Terkunci (Diskusi Warak Dulu)</div>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <section id="screen-register-duel" class="hidden space-y-6">
+      <div class="space-glass max-w-2xl mx-auto p-6 md:p-8 rounded-3xl border border-cyan-400/50 shadow-2xl shadow-cyan-500/20 text-center space-y-6">
+        
+        <div class="flex items-center justify-between mb-2">
+          <button onclick="duelGame.backToHomePortal()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold">← Kembali</button>
+          <span class="px-3 py-1 bg-cyan-500/20 border border-cyan-400/40 rounded-full text-cyan-300 text-xs font-bold uppercase tracking-wider">
+            Pos Pendaftaran Misi
+          </span>
+        </div>
+
+        <div class="flex items-center justify-center gap-4">
+          <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-3xl shadow-lg shadow-cyan-500/30">🚀</div>
+          <span id="reg-vs-badge" class="heading-font text-2xl font-black text-amber-400">VS</span>
+          <div id="reg-p2-badge" class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-orange-500 to-rose-600 flex items-center justify-center text-3xl shadow-lg shadow-orange-500/30">🛸</div>
+        </div>
+
+        <div class="space-y-1">
+          <h2 id="reg-title-text" class="heading-font text-2xl md:text-3xl font-black text-white">Data Penjelajah Antariksa</h2>
+          <p id="reg-desc-text" class="text-xs md:text-sm text-slate-300">
+            Lengkapi data sebelum meluncur ke 3 planet ekspedisi!
+          </p>
+        </div>
+
+        <form id="duel-register-form" onsubmit="duelGame.startDuelGame(event)" class="space-y-5 text-left">
+          <div id="reg-grid-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Kolom Kadet 1 -->
+            <div class="p-4 rounded-2xl bg-sky-950/60 border border-cyan-500/40 space-y-3">
+              <div class="flex items-center gap-2 text-cyan-300 font-bold text-sm">
+                <span>🚀</span> <span id="p1-title-label">Kadet 1 (Alpha)</span>
+              </div>
+              <div>
+                <label for="p1-name" class="block text-xs font-bold text-cyan-200 mb-1">Nama Lengkap:</label>
+                <input type="text" id="p1-name" required placeholder="Contoh: Atika Rizkiyanti" maxlength="25" class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-cyan-500/40 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-300 text-xs font-semibold" />
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label for="p1-grade" class="block text-[11px] font-bold text-cyan-200 mb-1">Kelas:</label>
+                  <select id="p1-grade" class="w-full px-2.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-semibold">
+                    <option value="Kelas 1">Kls 1</option><option value="Kelas 2">Kls 2</option><option value="Kelas 3">Kls 3</option>
+                    <option value="Kelas 4" selected>Kls 4</option><option value="Kelas 5">Kls 5</option><option value="Kelas 6">Kls 6</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="p1-section" class="block text-[11px] font-bold text-cyan-200 mb-1">Ruang:</label>
+                  <select id="p1-section" class="w-full px-2.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-semibold">
+                    <option value="A" selected>Ruang A</option><option value="B">Ruang B</option><option value="C">Ruang C</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Kolom Kadet 2 -->
+            <div id="p2-reg-card" class="p-4 rounded-2xl bg-orange-950/60 border border-orange-500/40 space-y-3">
+              <div class="flex items-center gap-2 text-orange-300 font-bold text-sm">
+                <span>🛸</span> Kadet 2 (Beta)
+              </div>
+              <div>
+                <label for="p2-name" class="block text-xs font-bold text-orange-200 mb-1">Nama Lengkap:</label>
+                <input type="text" id="p2-name" placeholder="Contoh: Budi Pratama" maxlength="25" class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-orange-500/40 text-white placeholder-slate-500 focus:outline-none focus:border-orange-300 text-xs font-semibold" />
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label for="p2-grade" class="block text-[11px] font-bold text-orange-200 mb-1">Kelas:</label>
+                  <select id="p2-grade" class="w-full px-2.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-semibold">
+                    <option value="Kelas 1">Kls 1</option><option value="Kelas 2">Kls 2</option><option value="Kelas 3">Kls 3</option>
+                    <option value="Kelas 4" selected>Kls 4</option><option value="Kelas 5">Kls 5</option><option value="Kelas 6">Kls 6</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="p2-section" class="block text-[11px] font-bold text-orange-200 mb-1">Ruang:</label>
+                  <select id="p2-section" class="w-full px-2.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-semibold">
+                    <option value="A">Ruang A</option><option value="B" selected>Ruang B</option><option value="C">Ruang C</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3.5 bg-slate-900/90 rounded-2xl border border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <span class="text-slate-300 font-semibold flex items-center gap-1.5">
+              <span>⏱️</span> Aturan Penting:
+            </span>
+            <span class="text-amber-300 font-bold">Wajib Menjawab Benar • Waktu Habis = Hilang Nyawa • Ulangi Babak</span>
+          </div>
+
+          <button type="submit" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 via-sky-500 to-orange-500 hover:from-cyan-400 hover:to-orange-400 text-slate-950 font-black text-sm tracking-wide shadow-lg shadow-cyan-500/20 transition transform hover:scale-[1.01] flex items-center justify-center gap-2 cursor-pointer">
+          <span>Mulai Peluncuran Roket</span> 🚀
+        </button>
+      </form>
+      </div>
+    </section>
+
+    <section id="screen-duel-arena" class="hidden space-y-5">
+      <div id="turn-announcer-box" class="p-4 rounded-2xl border flex flex-col gap-3 space-glass">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div id="turn-avatar-badge" class="w-12 h-12 rounded-2xl bg-cyan-500 flex items-center justify-center text-2xl shadow-lg">🚀</div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span id="turn-round-title" class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-cyan-500/20 text-cyan-300 border border-cyan-400/30">Babak 1</span>
+                <span id="turn-planet-tag" class="text-xs font-bold text-cyan-400">Sektor Bumi</span>
+                <span id="turn-lives-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40">❤️ Nyawa: 3/3</span>
+              </div>
+              <h3 id="current-player-turn-text" class="heading-font text-base sm:text-lg font-black text-white">Tantangan Pemain</h3>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5 bg-slate-900/90 border border-rose-500/60 px-3 py-1.5 rounded-xl text-xs font-bold text-rose-300 shadow">
+              <span>⏱️ Waktu:</span>
+              <span id="turn-timer-digits" class="heading-font text-sm sm:text-base font-black text-amber-300 min-w-[32px] text-right">45s</span>
+            </div>
+            <button onclick="soundNarrator.speakCurrentTurn()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-xl text-xs font-bold text-cyan-200 flex items-center gap-1">
+              <span>🔊 Panduan</span>
+            </button>
+          </div>
+        </div>
+        <div class="w-full bg-slate-950/80 h-2.5 rounded-full overflow-hidden border border-slate-800 relative">
+          <div id="turn-timer-bar" class="h-full bg-gradient-to-r from-emerald-500 via-amber-400 to-rose-500 rounded-full transition-all duration-300" style="width: 100%;"></div>
+        </div>
+      </div>
+
+      <!-- Alert Waktu Habis & Kehilangan Nyawa -->
+      <div id="timeout-alert-banner" class="hidden p-4 rounded-2xl bg-rose-950/90 border-2 border-rose-500 text-center space-y-2 shadow-2xl animate-bounce">
+        <div class="text-2xl">⏰💥</div>
+        <h4 id="timeout-alert-title" class="heading-font text-base font-black text-rose-300">WAKTU HABIS!</h4>
+        <p id="timeout-alert-desc" class="text-xs text-rose-100">Nyawa berkurang 1. Kamu wajib menyelesaikan babak ini!</p>
+        <button onclick="duelGame.dismissTimeoutAlert()" class="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs uppercase tracking-wider transition">Coba Lagi Babak Ini ➔</button>
+      </div>
+
+      <!-- Kontainer Gameplay Interaktif -->
+      <div id="duel-gameplay-container" class="space-glass p-5 md:p-6 rounded-3xl border border-slate-700/80 shadow-xl space-y-5 backdrop-blur-md">
+        <!-- Diinjeksi dinamis via JS -->
+      </div>
+    </section>
+
+    <section id="screen-duel-transit-mars" class="hidden space-y-6 text-center py-6">
+      <div class="space-glass max-w-xl mx-auto p-6 md:p-8 rounded-3xl border-2 border-cyan-400/70 shadow-2xl shadow-cyan-500/20 space-y-6 backdrop-blur-md">
+        <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-cyan-500 via-sky-400 to-indigo-600 flex items-center justify-center text-4xl shadow-lg shadow-cyan-500/30 animate-pulse">🔓</div>
+        <div class="space-y-2">
+          <span class="px-4 py-1 rounded-full bg-cyan-500/20 border border-cyan-400 text-cyan-300 text-xs font-bold uppercase tracking-wider">Sektor Bumi Selesai • Kunci Pertama Terbuka!</span>
+          <h2 class="heading-font text-2xl md:text-3xl font-black text-white">TRANS-MARS INJECTION! 🚀🔴</h2>
+          <p class="text-slate-200 text-xs sm:text-sm max-w-md mx-auto">Koordinat Planet Mars aktif! Di Mars, tips rumus bantuan dinonaktifkan. Buktikan kemampuan hitung mandirimu!</p>
+        </div>
+        <div id="transit-mars-grid" class="grid grid-cols-2 gap-3 text-left text-xs bg-slate-950/80 p-4 rounded-2xl border border-slate-800">
+          <div class="p-2.5 rounded-xl bg-sky-950/60 border border-cyan-500/30 space-y-1">
+            <div class="font-bold text-cyan-300"><span>🚀</span> <span id="transit-mars-p1-name">P1</span></div>
+            <div class="text-slate-300">Poin: <strong id="transit-mars-p1-score" class="text-white">0</strong></div>
+          </div>
+          <div id="transit-mars-p2-card" class="p-2.5 rounded-xl bg-orange-950/60 border border-orange-500/30 space-y-1">
+            <div class="font-bold text-orange-300"><span>🛸</span> <span id="transit-mars-p2-name">P2</span></div>
+            <div class="text-slate-300">Poin: <strong id="transit-mars-p2-score" class="text-white">0</strong></div>
+          </div>
+        </div>
+        <button onclick="duelGame.launchMarsSector()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-rose-500 via-red-500 to-amber-500 hover:from-rose-400 hover:to-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider transition shadow-lg">Mendarat di Planet Mars 🔴➔</button>
+      </div>
+    </section>
+
+    <section id="screen-duel-transit-venus" class="hidden space-y-6 text-center py-6">
+      <div class="space-glass max-w-xl mx-auto p-6 md:p-8 rounded-3xl border-2 border-rose-500/70 shadow-2xl shadow-rose-500/20 space-y-6 backdrop-blur-md">
+        <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-yellow-500 via-amber-500 to-orange-600 flex items-center justify-center text-4xl shadow-lg shadow-yellow-500/30 animate-pulse">🔓</div>
+        <div class="space-y-2">
+          <span class="px-4 py-1 rounded-full bg-rose-500/20 border border-rose-400 text-rose-300 text-xs font-bold uppercase tracking-wider">Sektor Mars Selesai • Kunci Kedua Terbuka!</span>
+          <h2 class="heading-font text-2xl md:text-3xl font-black text-white">TRANS-VENUS WARP! 🚀🟡</h2>
+          <p class="text-slate-200 text-xs sm:text-sm max-w-md mx-auto">Kunci Kedua terbuka! Meluncur ke Venus yang ekstrem. Pilihan jawaban diacak penuh & tidak ada tips!</p>
+        </div>
+        <div id="transit-venus-grid" class="grid grid-cols-2 gap-3 text-left text-xs bg-slate-950/80 p-4 rounded-2xl border border-slate-800">
+          <div class="p-2.5 rounded-xl bg-sky-950/60 border border-cyan-500/30 space-y-1">
+            <div class="font-bold text-cyan-300"><span>🚀</span> <span id="transit-venus-p1-name">P1</span></div>
+            <div class="text-slate-300">Poin: <strong id="transit-venus-p1-score" class="text-white">0</strong></div>
+          </div>
+          <div id="transit-venus-p2-card" class="p-2.5 rounded-xl bg-orange-950/60 border border-orange-500/30 space-y-1">
+            <div class="font-bold text-orange-300"><span>🛸</span> <span id="transit-venus-p2-name">P2</span></div>
+            <div class="text-slate-300">Poin: <strong id="transit-venus-p2-score" class="text-white">0</strong></div>
+          </div>
+        </div>
+        <button onclick="duelGame.launchVenusSector()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-yellow-500 via-amber-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-slate-950 font-black text-xs uppercase tracking-wider transition shadow-lg">Tembus Atmosfer Venus 🟡➔</button>
+      </div>
+    </section>
+
+    <section id="screen-duel-victory" class="hidden space-y-6 text-center py-4">
+      <div class="space-glass max-w-2xl mx-auto p-6 md:p-8 rounded-3xl border-2 border-amber-400/60 shadow-2xl shadow-amber-500/20 space-y-6 backdrop-blur-md">
+        <div class="w-24 h-24 mx-auto rounded-3xl bg-gradient-to-tr from-amber-400 to-yellow-300 flex items-center justify-center text-5xl shadow-xl shadow-amber-500/40">🏆</div>
+        <div class="space-y-2">
+          <span class="px-4 py-1 rounded-full bg-amber-400/20 border border-amber-400 text-amber-300 text-xs font-bold uppercase tracking-wider">Hasil Akhir Ekspedisi</span>
+          <h2 id="duel-winner-heading" class="heading-font text-2xl md:text-3xl font-black text-white">JUARA GALAKSI! 🥇</h2>
+          <p id="duel-winner-desc" class="text-slate-200 text-xs sm:text-sm max-w-md mx-auto">Perekapan skor poin dan 36 bintang prestasi dari ketiga planet telah selesai!</p>
+        </div>
+
+        <div id="podium-grid" class="grid grid-cols-2 gap-3 sm:gap-4 text-left text-xs">
+          <div id="podium-card-p1" class="p-4 rounded-2xl bg-sky-950/70 border-2 border-cyan-400/60 space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-cyan-300"><span>🚀</span> <span id="podium-p1-name">Kadet 1</span></span>
+              <span id="podium-p1-rank" class="px-2 py-0.5 rounded font-black text-[10px] bg-cyan-500 text-slate-950">JUARA</span>
+            </div>
+            <div class="text-[11px] text-slate-300" id="podium-p1-class">-</div>
+            <div class="pt-2 border-t border-slate-700/80 space-y-1">
+              <div class="flex justify-between"><span>Total Poin:</span> <strong id="podium-p1-score" class="text-cyan-300 text-sm">0</strong></div>
+              <div class="flex justify-between"><span>Bintang:</span> <strong id="podium-p1-stars" class="text-amber-300">0 ⭐</strong></div>
+            </div>
+          </div>
+          <div id="podium-card-p2" class="p-4 rounded-2xl bg-orange-950/70 border-2 border-orange-400/60 space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-orange-300"><span>🛸</span> <span id="podium-p2-name">Kadet 2</span></span>
+              <span id="podium-p2-rank" class="px-2 py-0.5 rounded font-black text-[10px] bg-orange-500 text-slate-950">RUNNER UP</span>
+            </div>
+            <div class="text-[11px] text-slate-300" id="podium-p2-class">-</div>
+            <div class="pt-2 border-t border-slate-700/80 space-y-1">
+              <div class="flex justify-between"><span>Total Poin:</span> <strong id="podium-p2-score" class="text-orange-300 text-sm">0</strong></div>
+              <div class="flex justify-between"><span>Bintang:</span> <strong id="podium-p2-stars" class="text-amber-300">0 ⭐</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+          <button onclick="duelGame.rematch()" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-amber-500 hover:from-cyan-400 hover:to-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider transition">Main Ulang 🔄</button>
+          <button onclick="duelGame.backToHomePortal()" class="px-6 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-bold text-xs uppercase tracking-wider transition">Menu Utama 🏠</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL: Tujuan Belajar -->
+  <div id="learning-objective-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="space-glass max-w-lg w-full p-6 rounded-3xl border border-blue-500/50 shadow-2xl text-left space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="heading-font text-lg font-bold text-blue-300 flex items-center gap-2"><span>🎯</span> Tujuan Pembelajaran</h3>
+        <button onclick="duelGame.toggleLearningModal(false)" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 font-bold text-slate-300">✕</button>
+      </div>
+      <div class="text-sm text-slate-200 space-y-3 leading-relaxed">
+        <p><strong>Pada akhir Fase B</strong>, fokusnya adalah Murid dapat mengenal, mengukur, dan memahami hubungan antar-satuan baku berat.</p>
+        <p><strong>Pada akhir Fase C</strong>, fokusnya Murid mengidentifikasi satuan berat tingkat lanjut seperti konversi kompleks, perhitungan desimal/pecahan, serta penerapan rasio dan proporsi.</p>
+        <p>Murid mampu mengonversi berbagai satuan berat dalam tangga satuan yang lebih luas (dari <strong class="font-bold text-amber-300">miligram</strong>, <strong class="font-bold text-amber-300">gram</strong>, hingga <strong class="font-bold text-amber-300">kilogram</strong> atau <strong class="font-bold text-amber-300">ton</strong> dan <strong class="font-bold text-amber-300">kuintal</strong>).</p>
+      </div>
+      <button onclick="duelGame.toggleLearningModal(false)" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase transition">Tutup Jendela</button>
+    </div>
+  </div>
+
+  <!-- MODAL: Tangga Satuan -->
+  <div id="guide-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="space-glass max-w-lg w-full p-6 rounded-3xl border border-indigo-500/50 shadow-2xl text-left space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="heading-font text-lg font-bold text-indigo-300 flex items-center gap-2"><span>📖</span> Tangga Satuan Berat</h3>
+        <button onclick="duelGame.toggleGuideModal(false)" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 font-bold text-slate-300">✕</button>
+      </div>
+      <div class="text-xs text-slate-200 space-y-3">
+        <div class="p-3 bg-indigo-950/50 rounded-xl border border-indigo-500/30 grid grid-cols-2 gap-2 text-[11px]">
+          <div>• <strong class="font-bold">1 Ton</strong> = 1.000 kg</div><div>• <strong class="font-bold">1 Ton</strong> = 10 kuintal</div>
+          <div>• <strong class="font-bold">1 Kuintal</strong> = 100 kg</div><div>• <strong class="font-bold">1 kg</strong> = 10 ons (hg)</div>
+          <div>• <strong class="font-bold">1 kg</strong> = 1.000 gram</div><div>• <strong class="font-bold">1 ons (hg)</strong> = 100 gram</div>
+        </div>
+      </div>
+      <button onclick="duelGame.toggleGuideModal(false)" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs uppercase tracking-wider transition">Tutup Panduan</button>
+    </div>
+  </div>
+
+  <!-- MODAL: Chat IN-GAME Gemini -->
+  <div id="warak-chat-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="space-glass max-w-md w-full rounded-3xl border border-emerald-500/50 shadow-2xl flex flex-col h-[85vh] max-h-[650px] overflow-hidden">
+      <!-- Chat Header -->
+      <div class="bg-emerald-950/80 border-b border-emerald-500/30 p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-emerald-500/20 p-1 border border-emerald-400 flex items-center justify-center">
+            <img src="https://i.imgur.com/qTQOPGx.png" alt="Warak" class="w-full h-full object-contain" />
+          </div>
+          <div>
+            <h3 class="heading-font text-sm font-bold text-emerald-300">AI Robot Warak</h3>
+            <p class="text-[10px] text-emerald-200/70">Online - Analisis Bahan Bakar</p>
+          </div>
+        </div>
+        <div class="flex flex-col items-end">
+          <span class="text-[10px] font-bold text-rose-300 uppercase tracking-wider mb-0.5">Waktu Diskusi</span>
+          <div class="bg-slate-900 border border-rose-500/50 px-3 py-1 rounded-lg">
+            <span id="chat-timer-display" class="heading-font text-base font-black text-rose-400 animate-pulse">05:00</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Chat History -->
+      <div id="chat-warak-history" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-900/40">
+        <div class="text-center text-[10px] text-slate-500 mb-2">Sistem Komunikasi Terenkripsi Aktif</div>
+        <div class="flex items-start gap-2 max-w-[85%]">
+          <div class="w-6 h-6 rounded-full bg-emerald-900 flex-shrink-0 flex items-center justify-center text-xs">🤖</div>
+          <div class="bg-slate-800 border border-slate-700 text-slate-200 text-xs px-3 py-2 rounded-xl rounded-tl-none leading-relaxed">
+            Halo Kadet! Saya Robot Warak. Kamu punya waktu 5 menit untuk bertanya dan berlatih satuan berat (kg, ons, gram, ton, kuintal) sebelum palka misi dibuka. Coba temukan sampah di sekitarmu, lalu ketik di sini berapa perkiraan beratnya!
+          </div>
+        </div>
+      </div>
+
+      <!-- Pilihan Paham / Belajar Lagi -->
+      <div id="chat-warak-options" class="px-3 py-2 bg-slate-950 border-t border-slate-800 flex gap-2 justify-center hidden">
+        <button onclick="warakPaham()" class="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-lg shadow-emerald-500/20 flex items-center gap-1"><span>Sudah Paham!</span> 🚀</button>
+        <button onclick="warakBelajarLagi()" class="px-4 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold transition shadow-lg shadow-amber-500/20 flex items-center gap-1"><span>Belajar Lagi</span> 📚</button>
+      </div>
+
+      <!-- Chat Input Area -->
+      <div class="p-3 bg-slate-950/80 border-t border-slate-800 flex gap-2 items-center">
+        <input type="text" id="chat-warak-input" placeholder="Ketik jawabanmu di sini..." onkeypress="if(event.key === 'Enter') sendWarakMessage()" class="flex-1 bg-slate-900 border border-slate-700 text-white text-xs px-4 py-3 rounded-2xl focus:outline-none focus:border-emerald-400 transition" />
+        <button onclick="sendWarakMessage()" class="w-10 h-10 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-slate-950 flex items-center justify-center text-sm transition shadow-lg shadow-emerald-500/20">
+          🚀
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Mode Pemilihan Misi -->
+  <div id="mission-mode-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="space-glass max-w-sm w-full p-6 rounded-3xl border border-amber-500/50 shadow-2xl text-center space-y-5">
+      <h3 class="heading-font text-xl font-bold text-amber-300">Pilih Mode Ekspedisi</h3>
+      <p class="text-xs text-slate-300">Apakah kamu ingin berlatih sendirian atau bertanding dengan teman?</p>
+      <div class="space-y-3">
+        <button onclick="duelGame.selectSoloMode()" class="w-full p-4 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-600 transition flex items-center gap-3 text-left">
+          <div class="text-3xl">🧑‍🚀</div>
+          <div>
+            <div class="font-bold text-white text-sm">Mode Latihan Solo</div>
+            <div class="text-[10px] text-slate-400">Main sendiri 12 Level Ekspedisi.</div>
+          </div>
+        </button>
+        <button onclick="duelGame.selectDuelMode()" class="w-full p-4 rounded-2xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 transition shadow-lg flex items-center gap-3 text-left">
+          <div class="text-3xl">⚔️</div>
+          <div>
+            <div class="font-bold text-white text-sm">Duel 2 Pemain (1v1)</div>
+            <div class="text-[10px] text-blue-200">Main bergantian dengan temanmu!</div>
+          </div>
+        </button>
+      </div>
+      <button onclick="duelGame.toggleModeModal(false)" class="text-xs text-slate-400 hover:text-white underline">Batal</button>
+    </div>
+  </div>
+
+  <!-- Footer Info Pengembang -->
+  <footer class="relative z-20 text-center py-4 mt-6 text-[11px] text-slate-400 bg-slate-950/90 border-t border-slate-800 font-medium tracking-wide">
+    Pengembang Game : Atika Rizkiyanti Nurfaidah, S.Pd.
+  </footer>
+
+  <script>
+    /* FUNGSI SISTEM CHAT AI IN-GAME (GEMINI API) */
+    let chatTimerInterval = null;
+    let chatTimeLeft = 300;
+    let chatPassed = false;
+    let isWarakTyping = false;
+    let warakChatHistory = [];
+
+    const warakSystemPrompt = "Kamu adalah Robot Warak, asisten AI ramah untuk siswa kelas 4 SD. Kamu diciptakan di kota Semarang oleh Bu Guru Atika dari SDN Karanganyar Gunung 02. Misi kalian adalah memandu perjalanan roket menjelajah antariksa untuk memasang satelit yang penting untuk Bumi di masa depan. Roket ini menggunakan bahan bakar metana yang dihasilkan dari sampah yang dikumpulkan anak-anak di Bumi. \n" +
+      "ATURAN UTAMA:\n" +
+      "1. Pancing siswa untuk menyebutkan sampah yang dikumpulkan secara nyata di Bumi beserta beratnya (misal botol plastik 1 kg).\n" +
+      "2. Olah data sampah itu untuk membuat pertanyaan matematika konversi satuan berat (kg, gram, ton, kuintal) secara bertahap.\n" +
+      "3. TANYAKAN SATU PER SATU SAJA. Jangan berikan semua pertanyaan sekaligus.\n" +
+      "4. JIKA JAWABAN SALAH: Katakan 'Tidak apa-apa, mari belajar lagi' lalu berikan petunjuk yang lembut dan tuntun cara menghitungnya.\n" +
+      "5. JIKA JAWABAN BENAR: Berikan pujian yang menyenangkan dengan menyebut nama pembuatmu (Bu Atika) atau kota Semarang jika relevan.\n" +
+      "6. Batasi setiap balasanmu maksimal 2 hingga 3 kalimat pendek saja agar anak SD cepat membacanya dan mudah diubah ke suara (Text-to-Speech).";
+
+    function initWarakChat() {
+      const chatBox = document.getElementById('chat-warak-history');
+      const inputEl = document.getElementById('chat-warak-input');
+      warakChatHistory = []; 
+      
+      if(inputEl) { 
+        inputEl.value = ''; 
+        inputEl.disabled = false; 
+        inputEl.focus(); 
+      }
+      
+      const optionsEl = document.getElementById('chat-warak-options');
+      if (optionsEl) optionsEl.classList.remove('hidden');
+
+      const initialMessage = "Halo Kadet! Saya Robot Warak, buatan Bu Guru Atika dari SDN Karanganyar Gunung 02 Semarang. Untuk meluncurkan roket kita yang akan memasang satelit masa depan, kita butuh bahan bakar metana dari sampah! Ayo sebutkan, kamu berhasil mengumpulkan sampah apa dan berapa perkiraan beratnya? (Contoh: Kertas bekas 2 kg).";
+
+      if(chatBox) {
+        chatBox.innerHTML = `
+          <div class="text-center text-[10px] text-slate-500 mb-2">Sistem Komunikasi AI Terenkripsi Aktif</div>
+          <div class="flex items-start gap-2 max-w-[85%]">
+            <div class="w-6 h-6 rounded-full bg-emerald-900 flex-shrink-0 flex items-center justify-center text-xs">🤖</div>
+            <div class="bg-slate-800 border border-slate-700 text-slate-200 text-xs px-3 py-2 rounded-xl rounded-tl-none leading-relaxed shadow-sm">
+              ${initialMessage}
+            </div>
+          </div>
+        `;
+      }
+
+      // Warak langsung berbicara saat chat dibuka
+      setTimeout(() => {
+        soundNarrator.speak(initialMessage);
+      }, 500);
+    }
+
+    async function sendWarakMessage() {
+      if (isWarakTyping || chatPassed) return;
+      
+      const inputEl = document.getElementById('chat-warak-input');
+      const text = inputEl.value.trim();
+      if (!text) return;
+
+      const chatBox = document.getElementById('chat-warak-history');
+      chatBox.innerHTML += `
+        <div class="flex items-end justify-end gap-2 mb-4 w-full">
+          <div class="bg-cyan-700 text-white text-xs px-3 py-2 rounded-xl rounded-br-none max-w-[85%] leading-relaxed shadow-sm">
+            ${text.replace(/</g, "&lt;")}
+          </div>
+        </div>
+      `;
+      inputEl.value = '';
+      chatBox.scrollTop = chatBox.scrollHeight;
+      
+      isWarakTyping = true;
+      inputEl.disabled = true;
+
+      const typingId = 'typing-' + Date.now();
+      chatBox.innerHTML += `
+        <div id="${typingId}" class="flex items-start gap-2 mb-4 max-w-[85%]">
+          <div class="w-6 h-6 rounded-full bg-emerald-900 flex-shrink-0 flex items-center justify-center text-xs">🤖</div>
+          <div class="bg-slate-800 border border-slate-700 text-slate-400 text-xs px-3 py-2 rounded-xl rounded-tl-none flex gap-1.5 items-center h-8 shadow-sm">
+             <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+             <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+             <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+          </div>
+        </div>
+      `;
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      warakChatHistory.push({ role: "user", parts: [{ text: text }] });
+
+      try {
+        const apiKey = ""; // Disuplai oleh Canvas
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+        const payload = {
+          contents: warakChatHistory,
+          systemInstruction: { parts: [{ text: warakSystemPrompt }] }
+        };
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        const candidate = result.candidates?.[0];
+        let botReply = "Aduh, sinyal satelit ke Bumi sedang terganggu! Bisa diulangi lagi Kadet?";
+
+        if (candidate && candidate.content?.parts?.[0]?.text) {
+          botReply = candidate.content.parts[0].text;
+          warakChatHistory.push({ role: "model", parts: [{ text: botReply }] });
+        }
+
+        const tEl = document.getElementById(typingId);
+        if(tEl) tEl.remove();
+
+        const formattedText = botReply.replace(/\*\*(.*?)\*\*/g, '<strong class="text-amber-300">$1</strong>');
+
+        chatBox.innerHTML += `
+          <div class="flex items-start gap-2 mb-4 max-w-[85%]">
+            <div class="w-6 h-6 rounded-full bg-emerald-900 flex-shrink-0 flex items-center justify-center text-xs">🤖</div>
+            <div class="bg-slate-800 border border-emerald-500/30 text-emerald-100 text-xs px-3 py-2 rounded-xl rounded-tl-none leading-relaxed shadow-sm">
+              ${formattedText}
+            </div>
+          </div>
+        `;
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // Membacakan balasan AI dengan suara Robot Warak
+        // Menghilangkan tanda bintang markdown agar pengucapannya mulus
+        const textToSpeak = botReply.replace(/\*/g, '');
+        soundNarrator.speak(textToSpeak);
+
+        isWarakTyping = false;
+        inputEl.disabled = false;
+        inputEl.focus();
+
+        if (botReply.toLowerCase().includes("terisi penuh") || botReply.toLowerCase().includes("bersiaplah meluncur")) {
+           chatPassed = true;
+           inputEl.disabled = true;
+           document.getElementById('chat-warak-options').classList.add('hidden');
+           setTimeout(() => { duelGame.closeChatAndUnlock(); }, 3500);
+        }
+
+      } catch (err) {
+         console.error("Chat API Error:", err);
+         const tEl = document.getElementById(typingId);
+         if(tEl) tEl.remove();
+         isWarakTyping = false;
+         inputEl.disabled = false;
+      }
+    }
+
+    function warakPaham() {
+      if (isWarakTyping || chatPassed) return;
+      const chatBox = document.getElementById('chat-warak-history');
+      chatBox.innerHTML += `
+        <div class="flex items-end justify-end gap-2 mb-4 w-full">
+          <div class="bg-emerald-700 text-white text-xs px-3 py-2 rounded-xl rounded-br-none max-w-[85%] leading-relaxed shadow-sm">
+            Saya sudah paham, Warak!
+          </div>
+        </div>
+      `;
+      chatBox.scrollTop = chatBox.scrollHeight;
+      
+      isWarakTyping = true;
+      const inputEl = document.getElementById('chat-warak-input');
+      if(inputEl) inputEl.disabled = true;
+      document.getElementById('chat-warak-options').classList.add('hidden');
+      
+      setTimeout(() => {
+        chatBox.innerHTML += `
+          <div class="flex items-start gap-2 mb-4 max-w-[85%]">
+            <div class="w-6 h-6 rounded-full bg-emerald-900 flex-shrink-0 flex items-center justify-center text-xs">🤖</div>
+            <div class="bg-slate-800 border border-emerald-500/30 text-emerald-100 text-xs px-3 py-2 rounded-xl rounded-tl-none leading-relaxed shadow-sm">
+              Luar biasa! Bahan bakar sudah terisi penuh! Kunci Misi Ekspedisi telah menyala. Bersiaplah meluncur, Kapten!
+            </div>
+          </div>
+        `;
+        chatBox.scrollTop = chatBox.scrollHeight;
+        chatPassed = true;
+        isWarakTyping = false;
+        setTimeout(() => { duelGame.closeChatAndUnlock(); }, 3500);
+      }, 1000);
+    }
+
+    function warakBelajarLagi() {
+      if (isWarakTyping || chatPassed) return;
+      const inputEl = document.getElementById('chat-warak-input');
+      if(inputEl) {
+        inputEl.value = "Beri saya satu pertanyaan lagi Warak, saya mau belajar lagi.";
+        sendWarakMessage();
+      }
+    }
+
+    /* ENGINE AUDIO SFX & BGM */
+    class SoundFX {
+      constructor() { this.muted = false; this.ctx = null; }
+      init() {
+        if (!this.ctx) { const AudioContext = window.AudioContext || window.webkitAudioContext; if (AudioContext) this.ctx = new AudioContext(); }
+        if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+      }
+      toggleMute() { this.muted = !this.muted; const icon = document.getElementById('audio-icon'); if (icon) icon.textContent = this.muted ? '🔇' : '🔊'; }
+      playTone(freq, type, duration, gainVal = 0.1) {
+        if (this.muted) return;
+        try {
+          this.init(); if (!this.ctx) return;
+          const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+          osc.type = type; osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          gain.gain.setValueAtTime(gainVal, this.ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+          osc.connect(gain); gain.connect(this.ctx.destination);
+          osc.start(); osc.stop(this.ctx.currentTime + duration);
+        } catch (e) {}
+      }
+      click() { this.playTone(600, 'sine', 0.08, 0.1); }
+      success() { this.playTone(523.25, 'triangle', 0.12, 0.15); setTimeout(() => this.playTone(659.25, 'triangle', 0.14, 0.15), 80); setTimeout(() => this.playTone(783.99, 'triangle', 0.25, 0.15), 160); }
+      meriah() { [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => { setTimeout(() => this.playTone(freq, 'sine', 0.2, 0.2), idx * 90); }); }
+      boom() {
+        if (this.muted) return;
+        try {
+          this.init(); if (!this.ctx) return;
+          const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+          osc.type = 'sawtooth'; osc.frequency.setValueAtTime(140, this.ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(30, this.ctx.currentTime + 0.4);
+          gain.gain.setValueAtTime(0.28, this.ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.4);
+          osc.connect(gain); gain.connect(this.ctx.destination);
+          osc.start(); osc.stop(this.ctx.currentTime + 0.4);
+        } catch (e) {}
+      }
+      laser() {
+        if (this.muted) return;
+        try {
+          this.init(); if (!this.ctx) return;
+          const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+          osc.type = 'sawtooth'; osc.frequency.setValueAtTime(880, this.ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(140, this.ctx.currentTime + 0.2);
+          gain.gain.setValueAtTime(0.18, this.ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.2);
+          osc.connect(gain); gain.connect(this.ctx.destination);
+          osc.start(); osc.stop(this.ctx.currentTime + 0.2);
+        } catch (e) {}
+      }
+    }
+    const soundFx = new SoundFX();
+
+    class BGMPlayer {
+      constructor() { this.playing = false; this.ctx = null; this.timer = null; this.step = 0; this.notes = [261.63, 311.13, 349.23, 392.00, 466.16, 523.25, 392.00, 349.23]; }
+      init() { if (!this.ctx) { const AudioContext = window.AudioContext || window.webkitAudioContext; if (AudioContext) this.ctx = new AudioContext(); } if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); }
+      toggle() {
+        this.init(); this.playing = !this.playing;
+        const text = document.getElementById('bgm-text'); const icon = document.getElementById('bgm-icon');
+        if (text) text.textContent = this.playing ? 'Musik: ON' : 'Musik: OFF';
+        if (icon) icon.textContent = this.playing ? '🎶' : '🎵';
+        if (this.playing) this.startLoop(); else this.stopLoop();
+      }
+      startLoop() {
+        this.stopLoop();
+        const playNext = () => {
+          if (!this.playing || !this.ctx) return;
+          try {
+            const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+            const freq = this.notes[this.step % this.notes.length]; this.step++;
+            osc.type = 'sine'; osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+            gain.gain.setValueAtTime(0.03, this.ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 1.2);
+            osc.connect(gain); gain.connect(this.ctx.destination);
+            osc.start(); osc.stop(this.ctx.currentTime + 1.2);
+          } catch (e) {}
+          this.timer = setTimeout(playNext, 650);
+        };
+        playNext();
+      }
+      stopLoop() { if (this.timer) { clearTimeout(this.timer); this.timer = null; } }
+    }
+    const bgmPlayer = new BGMPlayer();
+
+    class SoundNarrator {
+      constructor() { this.enabled = true; this.synth = window.speechSynthesis || null; }
+      toggleVoice() {
+        this.enabled = !this.enabled;
+        if (!this.enabled && this.synth) this.synth.cancel();
+        const icon = document.getElementById('voice-icon'); const text = document.getElementById('voice-status-text');
+        if (icon) icon.textContent = this.enabled ? '🗣️' : '🔇';
+        if (text) text.textContent = this.enabled ? 'Warak: ON' : 'Warak: OFF';
+      }
+      speak(text) {
+        if (!this.enabled || !this.synth) return;
+        try {
+          this.synth.cancel();
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = 'id-ID'; utterance.rate = 0.95; utterance.pitch = 1.05;
+          const voices = this.synth.getVoices();
+          const idVoice = voices.find(v => v.lang === 'id-ID' || v.lang.startsWith('id'));
+          if (idVoice) utterance.voice = idVoice;
+          this.synth.speak(utterance);
+        } catch (e) {}
+      }
+      speakCurrentTurn() {
+        const cur = duelGame.getCurrentPlayer();
+        const round = duelGame.activeRounds[duelGame.currentRoundIndex];
+        if (!cur || !round) return;
+        if (duelGame.gameMode === 'solo') {
+            this.speak(`Babak ${duelGame.currentRoundIndex + 1}: ${round.title}. ${round.voiceDesc}`);
+        } else {
+            this.speak(`Babak ${duelGame.currentRoundIndex + 1}: ${round.title}. Giliran ${cur.name}! ${round.voiceDesc}`);
+        }
+      }
+    }
+    const soundNarrator = new SoundNarrator();
+
+    /* ENGINE LOGIKA GAME UTAMA */
+    class DuelGame {
+      constructor() {
+        this.portalProgress = { tujuan: false, materi: false, chat: false };
+        this.gameMode = 'duel';
+        this.activeRounds = [];
+        this.players = {
+          p1: { name: 'Kadet 1', grade: 'Kls 4 - Ruang A', score: 0, stars: 0, lives: 3, knockedOut: false },
+          p2: { name: 'Kadet 2', grade: 'Kls 4 - Ruang B', score: 0, stars: 0, lives: 3, knockedOut: false }
+        };
+        this.currentRoundIndex = 0;
+        this.roundTimeLimit = 45;
+        this.remainingTime = 45;
+        this.timerInterval = null;
+
+        this.selectedLeft = null;
+        this.selectedRight = null;
+        this.vaultInput = '';
+        this.isChecking = false;
+        this.roundOver = false; // Flag status round agar tidak ganda
+
+        // TEMPLATE 24 BABAK DASAR (Telah diperbarui Laser Chisel agar beda nilai)
+        this.rounds = [
+          // BUMI (Babak 1-8)
+          { roundNumber: 1, planet: 'Bumi', playerId: 'p1', type: 'match', title: 'Misi 1 (P1): Kargo Alpha', voiceDesc: 'Pasangkan perbekalan yang senilai. Pilihan kanan akan diacak oleh Robot Warak!', data: [{id:'b1-1', label:'3 kg Makanan', targetId:'v1-1', matched:false},{id:'b1-2', label:'50 Ons Air', targetId:'v1-2', matched:false}, {id:'b1-3', label:'4 kg Oksigen', targetId:'v1-3', matched:false}, {id:'b1-4', label:'2,5 kg Surya', targetId:'v1-4', matched:false}], targets: [{id:'v1-1', label:'3.000 gram', pairId:'b1-1', matched:false},{id:'v1-2', label:'5 kg', pairId:'b1-2', matched:false}, {id:'v1-3', label:'4.000 gram', pairId:'b1-3', matched:false}, {id:'v1-4', label:'2.500 gram', pairId:'b1-4', matched:false}] },
+          { roundNumber: 2, planet: 'Bumi', playerId: 'p2', type: 'match', title: 'Misi 1 (P2): Kargo Beta', voiceDesc: 'Giliran pemain selanjutnya! Pasangkan kargo logistik yang nilainya sama.', data: [{id:'b2-1', label:'5 kg Baterai', targetId:'v2-1', matched:false},{id:'b2-2', label:'70 Ons Cairan', targetId:'v2-2', matched:false}, {id:'b2-3', label:'3,5 kg Radar', targetId:'v2-3', matched:false}, {id:'b2-4', label:'2 kg Karbon', targetId:'v2-4', matched:false}], targets: [{id:'v2-1', label:'5.000 gram', pairId:'b2-1', matched:false},{id:'v2-2', label:'7 kg', pairId:'b2-2', matched:false}, {id:'v2-3', label:'3.500 gram', pairId:'b2-3', matched:false}, {id:'v2-4', label: '2.000 gram', pairId:'b2-4', matched:false}] },
+          { roundNumber: 3, planet: 'Bumi', playerId: 'p1', type: 'balance', title: 'Misi 2 (P1): Sayap Alpha', targetKg: 2000, targetDisplay: '2 Ton', voiceDesc: 'Seimbangkan sayap kanan tepat dua ton atau dua ribu kilogram!', modules: [{id:'bm1-1', label:'Modul A', raw:'12 kuintal', kg:1200, icon:'🔋', used:false}, {id:'bm1-2', label:'Modul B', raw:'800 kg', kg:800, icon:'🛡️', used:false}, {id:'bm1-3', label:'Modul C', raw:'5 kuintal', kg:500, icon:'📡', used:false}, {id:'bm1-4', label:'Modul D', raw:'300 kg', kg:300, icon:'📷', used:false}] },
+          { roundNumber: 4, planet: 'Bumi', playerId: 'p2', type: 'balance', title: 'Misi 2 (P2): Sayap Beta', targetKg: 2000, targetDisplay: '2 Ton', voiceDesc: 'Sekarang seimbangkan sayap kanan roketmu tepat dua ton!', modules: [{id:'bm2-1', label:'Generator', raw:'15 kuintal', kg:1500, icon:'⚡', used:false}, {id:'bm2-2', label:'Perisai', raw:'500 kg', kg:500, icon:'🛡️', used:false}, {id:'bm2-3', label:'Radar', raw:'8 kuintal', kg:800, icon:'📡', used:false}, {id:'bm2-4', label:'Udara', raw:'400 kg', kg:400, icon:'🌪️', used:false}] },
+          // Chisel 1: Solo/P1 Bumi. Target 5000g. Total=5200. Excess=200. C1=100, C2=200, C3=300
+          { roundNumber: 5, planet: 'Bumi', playerId: 'p1', type: 'chisel', title: 'Misi 3 (P1): Kristal Alpha', limitGram: 5000, voiceDesc: 'Batas ransel lima kilogram. Hitung selisihnya dan pilih laser pemotong yang tepat!', cutOptions: [100, 200, 300], crystals: { c1: {name:'Safir', current:1500, initial:1500, chiseled:false}, c2: {name:'Rubi', current:2200, initial:2200, chiseled:false}, c3: {name:'Zamrud', current:1500, initial:1500, chiseled:false} } },
+          // Chisel 2: Duel/P2 Bumi. Target 5000g. Total=5250. Excess=250. C1=150, C2=200, C3=250
+          { roundNumber: 6, planet: 'Bumi', playerId: 'p2', type: 'chisel', title: 'Misi 3 (P2): Kristal Beta', limitGram: 5000, voiceDesc: 'Pilih alat laser dengan presisi agar muatan pas tepat lima kilogram.', cutOptions: [150, 200, 250], crystals: { c1: {name:'Amethyst', current:1600, initial:1600, chiseled:false}, c2: {name:'Topaz', current:1900, initial:1900, chiseled:false}, c3: {name:'Kuarsa', current:1750, initial:1750, chiseled:false} } },
+          { roundNumber: 7, planet: 'Bumi', playerId: 'p1', type: 'vault', title: 'Misi 4 (P1): Brankas Bumi Alpha', voiceDesc: 'Hitung sisa bahan bakar untuk menemukan kode sandi 2 digit!', variations: [ { q: 'Tersedia <strong>1 kuintal</strong> bahan bakar. Terpakai <strong>65 kg</strong> dan <strong>15.000 gram</strong>. Berapa kg sisa bahan bakar?', h: '1 kuintal = 100 kg. Hitung 100 - (65 + 15).', a: '20' }, { q: 'Tersedia <strong>1 kuintal</strong> bahan bakar. Terpakai <strong>60 kg</strong> dan <strong>25.000 gram</strong>. Berapa kg sisa bahan bakar?', h: '1 kuintal = 100 kg. Hitung 100 - (60 + 25).', a: '15' }, { q: 'Tersedia <strong>1 kuintal</strong> bahan bakar. Terpakai <strong>50 kg</strong> dan <strong>38.000 gram</strong>. Berapa kg sisa bahan bakar?', h: '1 kuintal = 100 kg. Hitung 100 - (50 + 38).', a: '12' } ] },
+          { roundNumber: 8, planet: 'Bumi', playerId: 'p2', type: 'vault', title: 'Misi 4 (P2): Brankas Bumi Beta', voiceDesc: 'Pecahkan sandi Kunci Pertama dengan menghitung sisa bahan bakar!', variations: [ { q: 'Tersedia <strong>1 kuintal</strong> bahan bakar. Terpakai <strong>55 kg</strong> dan <strong>20.000 gram</strong>. Berapa kg sisanya?', h: '1 kuintal = 100 kg. Hitung 100 - (55 + 20).', a: '25' }, { q: 'Tersedia <strong>1 kuintal</strong> bahan bakar. Terpakai <strong>45 kg</strong> dan <strong>25.000 gram</strong>. Berapa kg sisanya?', h: '100 - (45 + 25).', a: '30' }, { q: 'Tersedia <strong>1 kuintal</strong> bahan bakar. Terpakai <strong>30 kg</strong> dan <strong>42.000 gram</strong>. Berapa kg sisanya?', h: '100 - (30 + 42).', a: '28' } ] },
+          // MARS (Babak 9-16)
+          { roundNumber: 9, planet: 'Mars', playerId: 'p1', type: 'match', title: 'Misi 5 (P1): Reaktor Mars Alpha', voiceDesc: 'Sektor Mars! Hubungkan nilai desimal tanpa label tips konversi. Posisi diacak!', data: [{id:'m5-1', label:'4,5 kg Plasma', targetId:'mv5-1', matched:false},{id:'m5-2', label:'75 Ons Minyak', targetId:'mv5-2', matched:false}, {id:'m5-3', label:'0,8 Ton Baja', targetId:'mv5-3', matched:false}, {id:'m5-4', label:'3.250 g Ekstrak', targetId:'mv5-4', matched:false}], targets: [{id:'mv5-1', label:'4.500 gram', pairId:'m5-1', matched:false},{id:'mv5-2', label:'7,5 kg', pairId:'m5-2', matched:false}, {id:'mv5-3', label:'8 kuintal', pairId:'m5-3', matched:false}, {id:'mv5-4', label:'3 kg 250 g', pairId:'m5-4', matched:false}] },
+          { roundNumber: 10, planet: 'Mars', playerId: 'p2', type: 'match', title: 'Misi 5 (P2): Reaktor Mars Beta', voiceDesc: 'Pasangkan muatan reaktor dengan teliti tanpa bantuan.', data: [{id:'m5b-1', label:'5,5 kg Pendingin', targetId:'mv5b-1', matched:false},{id:'m5b-2', label:'65 Ons Kimia', targetId:'mv5b-2', matched:false}, {id:'m5b-3', label:'0,6 Ton Blok', targetId:'mv5b-3', matched:false}, {id:'m5b-4', label:'2.750 g Neon', targetId:'mv5b-4', matched:false}], targets: [{id:'mv5b-1', label:'5.500 gram', pairId:'m5b-1', matched:false},{id:'mv5b-2', label:'6,5 kg', pairId:'m5b-2', matched:false}, {id:'mv5b-3', label:'6 kuintal', pairId:'m5b-3', matched:false}, {id:'mv5b-4', label:'2 kg 750 g', pairId:'m5b-4', matched:false}] },
+          { roundNumber: 11, planet: 'Mars', playerId: 'p1', type: 'balance', title: 'Misi 6 (P1): Pendarat Alpha', targetKg: 3500, targetDisplay: '3,5 Ton', voiceDesc: 'Seimbangkan pendarat menjadi tiga koma lima ton tanpa bocoran kg!', modules: [{id:'mm1-1', label:'Booster Alpha', raw:'20 kuintal', kg:2000, icon:'🔥', used:false}, {id:'mm1-2', label:'Shield A', raw:'1.500 kg', kg:1500, icon:'🛡️', used:false}, {id:'mm1-3', label:'Laser Bor', raw:'8 kuintal', kg:800, icon:'⚡', used:false}, {id:'mm1-4', label:'Ventilasi', raw:'700 kg', kg:700, icon:'🌪️', used:false}] },
+          { roundNumber: 12, planet: 'Mars', playerId: 'p2', type: 'balance', title: 'Misi 6 (P2): Pendarat Beta', targetKg: 3500, targetDisplay: '3,5 Ton', voiceDesc: 'Atur keseimbangan pendarat tepat tiga koma lima ton.', modules: [{id:'mm2-1', label:'Booster Beta', raw:'22 kuintal', kg:2200, icon:'🔥', used:false}, {id:'mm2-2', label:'Shield B', raw:'1.300 kg', kg:1300, icon:'🛡️', used:false}, {id:'mm2-3', label:'Kompresor', raw:'9 kuintal', kg:900, icon:'⚡', used:false}, {id:'mm2-4', label:'Radiator', raw:'600 kg', kg:600, icon:'❄️', used:false}] },
+          // Chisel 3: Solo/P1 Mars. Target 8000g. Total=8600. Excess=600. C1=500, C2=600, C3=400
+          { roundNumber: 13, planet: 'Mars', playerId: 'p1', type: 'chisel', title: 'Misi 7 (P1): Magma Alpha', limitGram: 8000, voiceDesc: 'Batas tampung rover adalah delapan kilogram. Temukan laser yang tepat!', cutOptions: [500, 600, 400], crystals: { c1: {name:'Piroksen', current:3500, initial:3500, chiseled:false}, c2: {name:'Hematit', current:2800, initial:2800, chiseled:false}, c3: {name:'Basal', current:2300, initial:2300, chiseled:false} } },
+          // Chisel 4: Duel/P2 Mars. Target 8000g. Total=8650. Excess=650. C1=700, C2=650, C3=550
+          { roundNumber: 14, planet: 'Mars', playerId: 'p2', type: 'chisel', title: 'Misi 7 (P2): Magma Beta', limitGram: 8000, voiceDesc: 'Pangkas batuan magma rover agar beratnya pas delapan kilogram.', cutOptions: [700, 650, 550], crystals: { c1: {name:'Magnetit', current:3200, initial:3200, chiseled:false}, c2: {name:'Vulkanik', current:2900, initial:2900, chiseled:false}, c3: {name:'Silika', current:2550, initial:2550, chiseled:false} } },
+          { roundNumber: 15, planet: 'Mars', playerId: 'p1', type: 'vault', title: 'Misi 8 (P1): Inti Mars Alpha', voiceDesc: 'Bongkar sandi 3 digit Kunci Kedua dari soal cerita bertingkat!', variations: [ { q: 'Simpanan <strong>2 ton</strong>. Terpakai <strong>11 kuintal</strong>, <strong>750 kg</strong>, dan <strong>35.000 g</strong>. Sisa (kg)?', h: '', a: '115' }, { q: 'Simpanan <strong>2 ton</strong>. Terpakai <strong>10 kuintal</strong>, <strong>850 kg</strong>, dan <strong>25.000 g</strong>. Sisa (kg)?', h: '', a: '125' }, { q: 'Simpanan <strong>2 ton</strong>. Terpakai <strong>12 kuintal</strong>, <strong>650 kg</strong>, dan <strong>15.000 g</strong>. Sisa (kg)?', h: '', a: '135' } ] },
+          { roundNumber: 16, planet: 'Mars', playerId: 'p2', type: 'vault', title: 'Misi 8 (P2): Inti Mars Beta', voiceDesc: 'Buka Kunci Kedua menuju Planet Venus dengan hitungan tepat!', variations: [ { q: 'Simpanan <strong>2 ton</strong>. Terpakai <strong>12 kuintal</strong>, <strong>650 kg</strong>, dan <strong>25.000 g</strong>. Sisa (kg)?', h: '', a: '125' }, { q: 'Simpanan <strong>2 ton</strong>. Terpakai <strong>13 kuintal</strong>, <strong>550 kg</strong>, dan <strong>15.000 g</strong>. Sisa (kg)?', h: '', a: '135' }, { q: 'Simpanan <strong>2 ton</strong>. Terpakai <strong>11 kuintal</strong>, <strong>750 kg</strong>, dan <strong>45.000 g</strong>. Sisa (kg)?', h: '', a: '105' } ] },
+          // VENUS (Babak 17-24)
+          { roundNumber: 17, planet: 'Venus', playerId: 'p1', type: 'match', title: 'Misi 9 (P1): Tekanan Venus Alpha', voiceDesc: 'Sektor Venus! Pilihan jawaban diacak ekstrem oleh Robot Warak!', data: [{id:'v9-1', label:'6,25 kg Asam', targetId:'vv9-1', matched:false},{id:'v9-2', label:'125 Ons Minyak', targetId:'vv9-2', matched:false}, {id:'v9-3', label:'1,4 Ton Baterai', targetId:'vv9-3', matched:false}, {id:'v9-4', label:'5.750 g Sulfur', targetId:'vv9-4', matched:false}], targets: [{id:'vv9-1', label:'6.250 gram', pairId:'v9-1', matched:false},{id:'vv9-2', label:'12,5 kg', pairId:'v9-2', matched:false}, {id:'vv9-3', label:'14 kuintal', pairId:'v9-3', matched:false}, {id:'vv9-4', label:'5 kg 750 g', pairId:'v9-4', matched:false}] },
+          { roundNumber: 18, planet: 'Venus', playerId: 'p2', type: 'match', title: 'Misi 9 (P2): Tekanan Venus Beta', voiceDesc: 'Pasangkan tekanan atmosfer Venus. Jangan terkecoh urutannya!', data: [{id:'v9b-1', label:'7,25 kg Korosi', targetId:'vv9b-1', matched:false},{id:'v9b-2', label:'115 Ons Pelumas', targetId:'vv9b-2', matched:false}, {id:'v9b-3', label:'1,6 Ton Vulkanik', targetId:'vv9b-3', matched:false}, {id:'v9b-4', label:'4.850 g Senyawa', targetId:'vv9b-4', matched:false}], targets: [{id:'vv9b-1', label:'7.250 gram', pairId:'v9b-1', matched:false},{id:'vv9b-2', label:'11,5 kg', pairId:'v9b-2', matched:false}, {id:'vv9b-3', label:'16 kuintal', pairId:'v9b-3', matched:false}, {id:'vv9b-4', label:'4 kg 850 g', pairId:'v9b-4', matched:false}] },
+          { roundNumber: 19, planet: 'Venus', playerId: 'p1', type: 'balance', title: 'Misi 10 (P1): Perisai Panas Alpha', targetKg: 4800, targetDisplay: '4,8 Ton', voiceDesc: 'Seimbangkan perisai empat koma delapan ton tanpa label bantuan!', modules: [{id:'vm1-1', label:'Perisai Karbon', raw:'25 kuintal', kg:2500, icon:'🛡️', used:false}, {id:'vm1-2', label:'Penghantar', raw:'2.300 kg', kg:2300, icon:'❄️', used:false}, {id:'vm1-3', label:'Deflektor', raw:'15 kuintal', kg:1500, icon:'🌀', used:false}, {id:'vm1-4', label:'Magnet', raw:'900 kg', kg:900, icon:'🧲', used:false}] },
+          { roundNumber: 20, planet: 'Venus', playerId: 'p2', type: 'balance', title: 'Misi 10 (P2): Perisai Panas Beta', targetKg: 4800, targetDisplay: '4,8 Ton', voiceDesc: 'Seimbangkan perisai pelindung Venus tepat empat koma delapan ton.', modules: [{id:'vm2-1', label:'Perisai Wolfram', raw:'28 kuintal', kg:2800, icon:'🛡️', used:false}, {id:'vm2-2', label:'Kondensator', raw:'2.000 kg', kg:2000, icon:'❄️', used:false}, {id:'vm2-3', label:'Penyerap Kalor', raw:'16 kuintal', kg:1600, icon:'🔥', used:false}, {id:'vm2-4', label:'Stabilisator', raw:'700 kg', kg:700, icon:'⚡', used:false}] },
+          // Chisel 5: Solo/P1 Venus. Target 10000g. Total=10800. Excess=800. C1=700, C2=800, C3=900
+          { roundNumber: 21, planet: 'Venus', playerId: 'p1', type: 'chisel', title: 'Misi 11 (P1): Obsidian Alpha', limitGram: 10000, voiceDesc: 'Batas beban maksimal adalah sepuluh kilogram. Cari laser pemotong yang tepat!', cutOptions: [700, 800, 900], crystals: { c1: {name:'Sulfida', current:4500, initial:4500, chiseled:false}, c2: {name:'Kawah Maat', current:3800, initial:3800, chiseled:false}, c3: {name:'Piroksen', current:2500, initial:2500, chiseled:false} } },
+          // Chisel 6: Duel/P2 Venus. Target 10000g. Total=10850. Excess=850. C1=850, C2=750, C3=950
+          { roundNumber: 22, planet: 'Venus', playerId: 'p2', type: 'chisel', title: 'Misi 11 (P2): Obsidian Beta', limitGram: 10000, voiceDesc: 'Pangkas sampel obsidian agar pas sepuluh ribu gram.', cutOptions: [850, 750, 950], crystals: { c1: {name:'Hitam', current:4200, initial:4200, chiseled:false}, c2: {name:'Kawah Sapas', current:4000, initial:4000, chiseled:false}, c3: {name:'Magma', current:2650, initial:2650, chiseled:false} } },
+          { roundNumber: 23, planet: 'Venus', playerId: 'p1', type: 'vault', title: 'Misi 12 (P1): Inti Surya Alpha', voiceDesc: 'Ujian pamungkas! Jawab tantangan tiga digit Kunci Ketiga tanpa rumus!', variations: [ { q: 'Plasma daya <strong>3 ton</strong>. Terpakai <strong>16 kuintal</strong>, <strong>1.150 kg</strong>, dan <strong>20.000 g</strong>. Sisa (kg)?', h: '', a: '230' }, { q: 'Plasma daya <strong>3 ton</strong>. Terpakai <strong>15 kuintal</strong>, <strong>1.250 kg</strong>, dan <strong>30.000 g</strong>. Sisa (kg)?', h: '', a: '220' }, { q: 'Plasma daya <strong>3 ton</strong>. Terpakai <strong>17 kuintal</strong>, <strong>1.050 kg</strong>, dan <strong>40.000 g</strong>. Sisa (kg)?', h: '', a: '210' } ] },
+          { roundNumber: 24, planet: 'Venus', playerId: 'p2', type: 'vault', title: 'Misi 12 (P2): Inti Surya Beta', voiceDesc: 'Babak penentu! Bongkar Kunci Ketiga untuk menahbiskan gelar Panglima!', variations: [ { q: 'Plasma daya <strong>3 ton</strong>. Terpakai <strong>17 kuintal</strong>, <strong>1.050 kg</strong>, dan <strong>30.000 g</strong>. Sisa (kg)?', h: '', a: '220' }, { q: 'Plasma daya <strong>3 ton</strong>. Terpakai <strong>16 kuintal</strong>, <strong>1.150 kg</strong>, dan <strong>40.000 g</strong>. Sisa (kg)?', h: '', a: '210' }, { q: 'Plasma daya <strong>3 ton</strong>. Terpakai <strong>18 kuintal</strong>, <strong>950 kg</strong>, dan <strong>20.000 g</strong>. Sisa (kg)?', h: '', a: '230' } ] }
+        ];
+      }
+
+      // NAVIGASI PORTAL TERKUNCI (Unlock Sequence)
+      updatePortalLocks() {
+        const bTujuan = document.getElementById('btn-menu-tujuan');
+        const bMateri = document.getElementById('btn-menu-materi');
+        const bChat = document.getElementById('btn-menu-chat');
+        const bEkspedisi = document.getElementById('btn-menu-ekspedisi');
+        
+        if (bMateri && bChat && bEkspedisi) {
+          // Unlocking Menu 2
+          if (this.portalProgress.tujuan) {
+            bTujuan.classList.remove('pulse-card');
+            bMateri.className = 'btn-hover-scale space-glass p-5 rounded-3xl border-2 border-indigo-500 flex items-center gap-4 transition text-left group pulse-card';
+            document.getElementById('bg-icon-materi').className = 'w-14 h-14 rounded-2xl bg-indigo-500/20 flex items-center justify-center text-3xl group-hover:bg-indigo-500/40 transition';
+            document.getElementById('lock-materi').classList.add('hidden');
+            document.getElementById('icon-materi').classList.remove('hidden');
+            document.getElementById('desc-materi').textContent = 'Hafalkan tangga konversi berat.';
+            document.getElementById('desc-materi').classList.replace('text-slate-400', 'text-slate-200');
+          }
+          
+          // Unlocking Menu 3
+          if (this.portalProgress.materi) {
+            bMateri.classList.remove('pulse-card');
+            bChat.className = 'btn-hover-scale space-glass p-5 rounded-3xl border-2 border-emerald-500 flex items-center gap-4 transition text-left group pulse-card';
+            document.getElementById('bg-icon-chat').className = 'w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center transition overflow-hidden p-1 border border-emerald-500/30';
+            document.getElementById('lock-chat').classList.add('hidden');
+            document.getElementById('icon-chat').classList.remove('hidden');
+            document.getElementById('desc-chat').textContent = 'Diskusi langsung dengan AI pintar.';
+            document.getElementById('desc-chat').classList.replace('text-slate-400', 'text-slate-200');
+          }
+
+          // Unlocking Menu 4
+          if (this.portalProgress.chat) {
+            bChat.classList.remove('pulse-card');
+            bEkspedisi.className = 'btn-hover-scale relative space-glass p-5 rounded-3xl border-2 border-amber-500 flex items-center gap-4 transition text-left group overflow-hidden shadow-lg shadow-amber-500/20 pulse-card';
+            document.getElementById('bg-glow-ekspedisi').classList.add('group-hover:opacity-100');
+            document.getElementById('bg-icon-ekspedisi').className = 'w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-3xl shadow-lg transition';
+            document.getElementById('lock-ekspedisi').classList.add('hidden');
+            document.getElementById('icon-ekspedisi').classList.remove('hidden');
+            document.getElementById('desc-ekspedisi').textContent = 'Pilih Solo atau Duel 2 Pemain!';
+            document.getElementById('desc-ekspedisi').classList.replace('text-slate-400', 'text-slate-200');
+          }
+        }
+      }
+
+      openTujuan() {
+        this.toggleLearningModal(true);
+        if (!this.portalProgress.tujuan) {
+          this.portalProgress.tujuan = true;
+          this.updatePortalLocks();
+        }
+      }
+
+      openMateri() {
+        if (!this.portalProgress.tujuan) {
+          soundFx.boom();
+          soundNarrator.speak('Kadet! Kamu wajib membaca Tujuan Belajar terlebih dahulu!');
+          return;
+        }
+        this.toggleGuideModal(true);
+        if (!this.portalProgress.materi) {
+          this.portalProgress.materi = true;
+          this.updatePortalLocks();
+        }
+      }
+
+      openChat() {
+        if (!this.portalProgress.materi) {
+          soundFx.boom();
+          soundNarrator.speak('Kadet! Pahami dulu Materi Satuan sebelum berdiskusi dengan Robot Warak!');
+          return;
+        }
+        
+        soundFx.click();
+        const chatModal = document.getElementById('warak-chat-modal');
+        if (chatModal) chatModal.classList.remove('hidden');
+        
+        initWarakChat();
+        chatPassed = false;
+        isWarakTyping = false;
+        
+        soundNarrator.speak('Sistem komunikasi aktif. Jawab pertanyaan Robot Warak dan cari sampah di sekitarmu!');
+        
+        chatTimeLeft = 300;
+        const timerDisp = document.getElementById('chat-timer-display');
+        if (timerDisp) {
+           timerDisp.textContent = '05:00';
+           timerDisp.classList.remove('text-red-500');
+           timerDisp.classList.add('text-rose-400');
+        }
+        
+        if (chatTimerInterval) clearInterval(chatTimerInterval);
+        
+        chatTimerInterval = setInterval(() => {
+          if (chatPassed) {
+             clearInterval(chatTimerInterval);
+             return;
+          }
+          
+          chatTimeLeft--;
+          const m = Math.floor(chatTimeLeft / 60);
+          const s = chatTimeLeft % 60;
+          const minStr = m < 10 ? '0' + m : m;
+          const secStr = s < 10 ? '0' + s : s;
+          if (timerDisp) timerDisp.textContent = minStr + ':' + secStr;
+          
+          if (chatTimeLeft === 30) {
+            soundFx.click(); 
+            if (timerDisp) timerDisp.classList.replace('text-rose-400', 'text-red-500');
+          }
+          
+          if (chatTimeLeft <= 0) {
+            clearInterval(chatTimerInterval);
+            if (!chatPassed) {
+               const chatBox = document.getElementById('chat-warak-history');
+               chatBox.innerHTML += `
+                  <div class="flex items-start gap-2 mb-4 max-w-[85%]">
+                    <div class="w-6 h-6 rounded-full bg-emerald-900 flex-shrink-0 flex items-center justify-center text-xs">🤖</div>
+                    <div class="bg-slate-800 border border-amber-500/30 text-amber-200 text-xs px-3 py-2 rounded-xl rounded-tl-none leading-relaxed shadow-sm">
+                      Waktu diskusi habis! Tidak masalah, saya yakin kamu sudah belajar banyak. Kunci Misi Ekspedisi telah saya buka untukmu!
+                    </div>
+                  </div>
+               `;
+               chatBox.scrollTop = chatBox.scrollHeight;
+               chatPassed = true;
+               document.getElementById('chat-warak-options').classList.add('hidden');
+               setTimeout(() => { this.closeChatAndUnlock(); }, 3500);
+            }
+          }
+        }, 1000);
+      }
+
+      closeChatAndUnlock() {
+        const chatModal = document.getElementById('warak-chat-modal');
+        if (chatModal) chatModal.classList.add('hidden');
+        
+        if (!this.portalProgress.chat) {
+          this.portalProgress.chat = true;
+          this.updatePortalLocks();
+        }
+        
+        soundFx.meriah();
+        soundNarrator.speak('Diskusi selesai! Kunci Ekspedisi telah menyala. Silakan klik Mulai Ekspedisi!');
+      }
+
+      openEkspedisi() {
+        if (!this.portalProgress.chat) {
+          soundFx.boom();
+          soundNarrator.speak('Kadet! Sapa dan lapor ke Robot Warak terlebih dahulu untuk meminta izin meluncur!');
+          return;
+        }
+        this.toggleModeModal(true);
+      }
+
+      // PENGACAKAN SOAL UNTUK PEMAIN BARU (Misi 4, 8, 12, dll)
+      randomizeAllRounds() {
+        this.activeRounds.forEach(r => {
+          if (r.type === 'match') {
+            this.shuffleArray(r.data);
+            this.shuffleArray(r.targets);
+          } else if (r.type === 'balance') {
+            this.shuffleArray(r.modules);
+          } else if (r.type === 'vault') {
+            const v = r.variations[Math.floor(Math.random() * r.variations.length)];
+            r.questionHtml = v.q;
+            r.hint = v.h;
+            r.answer = v.a;
+          }
+        });
+      }
+
+      // NAVIGASI MODAL & MENU
+      toggleLearningModal(show) { soundFx.click(); const m = document.getElementById('learning-objective-modal'); if(m) { if(show){ m.classList.remove('hidden'); soundNarrator.speak('Tujuan Pembelajaran Fase B dan Fase C untuk materi satuan berat.'); } else { m.classList.add('hidden'); } } }
+      toggleGuideModal(show) { soundFx.click(); const m = document.getElementById('guide-modal'); if(m) { if(show){ m.classList.remove('hidden'); soundNarrator.speak('Materi tangga satuan berat. Hubungi Robot Warak bila bingung.'); } else { m.classList.add('hidden'); } } }
+      toggleModeModal(show) { soundFx.click(); const m = document.getElementById('mission-mode-modal'); if(m) { if(show) m.classList.remove('hidden'); else m.classList.add('hidden'); } }
+
+      selectSoloMode() {
+        this.gameMode = 'solo';
+        this.toggleModeModal(false);
+        const p2Card = document.getElementById('p2-reg-card');
+        const vsBadge = document.getElementById('reg-vs-badge');
+        const p2Badge = document.getElementById('reg-p2-badge');
+        const p1Title = document.getElementById('p1-title-label');
+        const title = document.getElementById('reg-title-text');
+        const gridCont = document.getElementById('reg-grid-container');
+
+        if(p2Card) p2Card.classList.add('hidden');
+        if(vsBadge) vsBadge.classList.add('hidden');
+        if(p2Badge) p2Badge.classList.add('hidden');
+        if(gridCont) gridCont.classList.remove('sm:grid-cols-2');
+        if(p1Title) p1Title.textContent = 'Kadet Astronaut Tunggal';
+        if(title) title.textContent = 'Pendaftaran Latihan Solo';
+        
+        document.getElementById('screen-home-portal').classList.add('hidden');
+        document.getElementById('screen-register-duel').classList.remove('hidden');
+        soundNarrator.speak('Mode Latihan Tunggal. Silakan isi namamu, Kapten!');
+      }
+
+      selectDuelMode() {
+        this.gameMode = 'duel';
+        this.toggleModeModal(false);
+        const p2Card = document.getElementById('p2-reg-card');
+        const vsBadge = document.getElementById('reg-vs-badge');
+        const p2Badge = document.getElementById('reg-p2-badge');
+        const p1Title = document.getElementById('p1-title-label');
+        const title = document.getElementById('reg-title-text');
+        const gridCont = document.getElementById('reg-grid-container');
+        const p2Input = document.getElementById('p2-name');
+
+        if(p2Card) p2Card.classList.remove('hidden');
+        if(vsBadge) vsBadge.classList.remove('hidden');
+        if(p2Badge) p2Badge.classList.remove('hidden');
+        if(gridCont) gridCont.classList.add('sm:grid-cols-2');
+        if(p1Title) p1Title.textContent = 'Kadet 1 (Alpha)';
+        if(title) title.textContent = 'Data Penjelajah Antariksa';
+        if(p2Input) p2Input.required = true;
+
+        document.getElementById('screen-home-portal').classList.add('hidden');
+        document.getElementById('screen-register-duel').classList.remove('hidden');
+        soundNarrator.speak('Mode Duel Dua Pemain. Isi data kedua kadet untuk bertanding.');
+      }
+
+      backToHomePortal() {
+        soundFx.click(); this.stopTimer(); this.resetAllRounds();
+        ['screen-duel-victory','screen-duel-transit-mars','screen-duel-transit-venus','screen-duel-arena','duel-scoreboard-header','screen-register-duel', 'fuel-emergency-overlay'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.add('hidden'); });
+        document.getElementById('screen-home-portal').classList.remove('hidden');
+      }
+
+      resetAllRounds() {
+        this.rounds.forEach(r => {
+          if (r.data) r.data.forEach(d => d.matched = false);
+          if (r.targets) r.targets.forEach(t => t.matched = false);
+          if (r.modules) r.modules.forEach(m => m.used = false);
+          if (r.crystals) Object.keys(r.crystals).forEach(k => { r.crystals[k].current = r.crystals[k].initial; r.crystals[k].chiseled = false; });
+          if (r.type === 'vault') r.answer = r.variations ? r.variations[0].a : r.answer;
+        });
+        this.selectedLeft = null; this.selectedRight = null; this.vaultInput = ''; this.isChecking = false; this.roundOver = false;
+        document.getElementById('timeout-alert-banner').classList.add('hidden');
+      }
+
+      shuffleArray(arr) { for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} }
+
+      getCurrentPlayer() { return this.activeRounds[this.currentRoundIndex] ? this.players[this.activeRounds[this.currentRoundIndex].playerId] : this.players.p1; }
+      
+      startDuelGame(e) {
+        if(e) e.preventDefault();
+        this.resetAllRounds();
+        this.players.p1.name = document.getElementById('p1-name').value || 'Kadet 1';
+        this.players.p1.grade = `${document.getElementById('p1-grade').value} - ${document.getElementById('p1-section').value}`;
+        
+        if (this.gameMode === 'duel') {
+            this.players.p2.name = document.getElementById('p2-name').value || 'Kadet 2';
+            this.players.p2.grade = `${document.getElementById('p2-grade').value} - ${document.getElementById('p2-section').value}`;
+            this.activeRounds = this.rounds;
+        } else {
+            this.activeRounds = this.rounds.filter(r => r.playerId === 'p1');
+        }
+
+        this.randomizeAllRounds();
+
+        ['p1','p2'].forEach(p => { this.players[p].score = 0; this.players[p].stars = 0; this.players[p].lives = 3; this.players[p].knockedOut = false; });
+        this.currentRoundIndex = 0;
+
+        ['screen-register-duel','screen-duel-transit-mars','screen-duel-transit-venus','screen-duel-victory','screen-home-portal'].forEach(id => document.getElementById(id).classList.add('hidden'));
+        document.getElementById('screen-duel-arena').classList.remove('hidden');
+        document.getElementById('duel-scoreboard-header').classList.remove('hidden');
+        document.getElementById('duel-scoreboard-header').classList.add('flex');
+
+        if (this.gameMode === 'solo') {
+            document.getElementById('p2-header-badge').style.display = 'none';
+            document.getElementById('scoreboard-vs').style.display = 'none';
+        } else {
+            document.getElementById('p2-header-badge').style.display = 'flex';
+            document.getElementById('scoreboard-vs').style.display = 'block';
+        }
+
+        this.updateHeaderScoreboard();
+        this.loadCurrentRound();
+        soundFx.meriah();
+        
+        if (this.gameMode === 'solo') {
+             soundNarrator.speak(`Misi Latihan Solo dimulai! Persiapkan dirimu, ${this.players.p1.name}!`);
+        } else {
+             soundNarrator.speak(`Duel Dua Pemain dimulai! Persiapkan dirimu, ${this.players.p1.name} dan ${this.players.p2.name}!`);
+        }
+      }
+
+      getHearts(n) { return '❤️'.repeat(n) + '🖤'.repeat(3 - n); }
+      
+      updateHeaderScoreboard() {
+        const round = this.activeRounds[this.currentRoundIndex] || this.activeRounds[0];
+        const activePid = round.playerId;
+
+        document.getElementById('p1-header-name').textContent = `P1: ${this.players.p1.name}`;
+        document.getElementById('p1-header-score').textContent = this.players.p1.score;
+        document.getElementById('p1-header-stars').textContent = this.players.p1.stars;
+        document.getElementById('p1-header-lives').textContent = this.getHearts(this.players.p1.lives);
+        
+        if(this.gameMode === 'duel') {
+            document.getElementById('p2-header-name').textContent = `P2: ${this.players.p2.name}`;
+            document.getElementById('p2-header-score').textContent = this.players.p2.score;
+            document.getElementById('p2-header-stars').textContent = this.players.p2.stars;
+            document.getElementById('p2-header-lives').textContent = this.getHearts(this.players.p2.lives);
+        }
+
+        const b1 = document.getElementById('p1-header-badge');
+        const b2 = document.getElementById('p2-header-badge');
+        
+        if (this.gameMode === 'solo') {
+           if(b1) b1.className = 'flex items-center gap-2 bg-sky-950 border-2 border-cyan-400 px-3 py-1 rounded-xl text-xs active-turn-p1 backdrop-blur-sm';
+        } else {
+           if (activePid === 'p1') { b1.className = 'flex items-center gap-2 bg-sky-950 border-2 border-cyan-400 px-3 py-1 rounded-xl text-xs active-turn-p1 backdrop-blur-sm'; b2.className = 'flex items-center gap-2 bg-slate-900/80 border border-orange-500/40 opacity-70 px-3 py-1 rounded-xl text-xs backdrop-blur-sm'; }
+           else { b1.className = 'flex items-center gap-2 bg-slate-900/80 border border-cyan-500/40 opacity-70 px-3 py-1 rounded-xl text-xs backdrop-blur-sm'; b2.className = 'flex items-center gap-2 bg-orange-950 border-2 border-orange-400 px-3 py-1 rounded-xl text-xs active-turn-p2 backdrop-blur-sm'; }
+        }
+      }
+
+      startTimer() {
+        this.stopTimer(); this.remainingTime = this.roundTimeLimit; this.updateTimerUI();
+        this.timerInterval = setInterval(() => {
+          this.remainingTime--; this.updateTimerUI();
+          if (this.remainingTime === 10) { soundFx.click(); soundNarrator.speak('Perhatian! Waktu tersisa sepuluh detik!'); }
+          if (this.remainingTime <= 0) this.handleTimeout();
+        }, 1000);
+      }
+      stopTimer() { if (this.timerInterval) { clearInterval(this.timerInterval); this.timerInterval = null; } }
+      updateTimerUI() {
+        const t = document.getElementById('turn-timer-digits'); const b = document.getElementById('turn-timer-bar');
+        if(!t || !b) return;
+        t.textContent = `${this.remainingTime}s`;
+        b.style.width = `${Math.max(0, (this.remainingTime / this.roundTimeLimit) * 100)}%`;
+        if (this.remainingTime > 20) t.className = 'heading-font text-sm font-black text-emerald-400 min-w-[32px] text-right';
+        else if (this.remainingTime > 10) t.className = 'heading-font text-sm font-black text-amber-300 min-w-[32px] text-right';
+        else t.className = 'heading-font text-sm font-black text-rose-500 min-w-[32px] text-right animate-pulse';
+      }
+
+      handleTimeout() {
+        if (this.roundOver) return;
+        this.stopTimer();
+        const cur = this.getCurrentPlayer();
+        cur.lives--; this.updateHeaderScoreboard(); soundFx.boom();
+        const banner = document.getElementById('timeout-alert-banner');
+        const btn = banner.querySelector('button');
+        this.roundOver = true; 
+        
+        if (cur.lives <= 0) {
+          cur.knockedOut = true;
+          document.getElementById('timeout-alert-title').textContent = this.gameMode === 'solo' ? `💀 GAME OVER!` : `💀 GAME OVER! ${cur.name.toUpperCase()} GUGUR!`;
+          document.getElementById('timeout-alert-desc').textContent = this.gameMode === 'solo' ? `Misi Gagal! Seluruh 3 nyawa habis dan ekspedisi terhenti.` : `Seluruh 3 nyawa habis! Lawan otomatis menang!`;
+          if(btn) btn.textContent = "Lihat Hasil Akhir ➔";
+          if(this.gameMode === 'solo') {
+             soundNarrator.speak(`Game over! ${cur.name} kehabisan nyawa dan dinyatakan gugur!`);
+          } else {
+             soundNarrator.speak(`Waktu habis! ${cur.name} kehilangan seluruh nyawa dan dinyatakan gugur! Game over!`);
+          }
+          banner.classList.remove('hidden');
+          setTimeout(() => {
+              if(!banner.classList.contains('hidden')) {
+                  this.showVictoryScreen();
+              }
+          }, 3500);
+        } else {
+          document.getElementById('timeout-alert-title').textContent = `⏰ WAKTU HABIS!`;
+          document.getElementById('timeout-alert-desc').textContent = this.gameMode === 'solo' ? `Kamu kehilangan 1 Nyawa. Sisa: ${cur.lives}/3. Wajib menyelesaikan misi ini!` : `${cur.name} kehilangan 1 Nyawa. Sisa: ${cur.lives}/3. Kamu wajib menyelesaikan misi ini!`;
+          if(btn) btn.textContent = "Coba Lagi Babak Ini ➔";
+          if(this.gameMode === 'solo') {
+             soundNarrator.speak(`Waktu habis! ${cur.name} kehilangan satu nyawa. Ayo coba lagi babak ini!`);
+          } else {
+             soundNarrator.speak(`Waktu habis! ${cur.name} kehilangan satu nyawa. Ayo coba lagi babak ini!`);
+          }
+          banner.classList.remove('hidden');
+        }
+      }
+      
+      dismissTimeoutAlert() {
+        document.getElementById('timeout-alert-banner').classList.add('hidden');
+        if (this.getCurrentPlayer().lives <= 0) return this.showVictoryScreen();
+        
+        // Paksa mengulang soal (Retry)
+        this.resetAllRounds(); 
+        this.randomizeAllRounds(); 
+        this.loadCurrentRound();
+      }
+
+      loadCurrentRound() {
+        if (this.currentRoundIndex >= this.activeRounds.length) return this.showVictoryScreen();
+        const round = this.activeRounds[this.currentRoundIndex];
+        const cur = this.players[round.playerId];
+        this.selectedLeft = null; this.selectedRight = null; this.vaultInput = ''; this.isChecking = false; this.roundOver = false;
+        
+        this.updateHeaderScoreboard();
+        document.getElementById('turn-round-title').textContent = `Babak ${this.currentRoundIndex + 1} Dari ${this.activeRounds.length}`;
+        document.getElementById('turn-planet-tag').textContent = `Sektor ${round.planet}`;
+        document.getElementById('turn-lives-badge').textContent = `❤️ Nyawa: ${cur.lives}/3`;
+
+        const box = document.getElementById('turn-announcer-box'); const av = document.getElementById('turn-avatar-badge'); const txt = document.getElementById('current-player-turn-text');
+        
+        if (this.gameMode === 'solo') {
+             box.className = 'p-4 rounded-2xl border flex flex-col gap-3 space-glass-p1';
+             av.className = 'w-12 h-12 rounded-2xl bg-cyan-500 flex items-center justify-center text-2xl shadow-lg shadow-cyan-500/40'; av.textContent = '🚀';
+             txt.innerHTML = `Tantangan ${cur.name}: <strong class="text-cyan-300">${round.title}</strong>`;
+        } else {
+            if (round.playerId === 'p1') {
+              box.className = 'p-4 rounded-2xl border flex flex-col gap-3 space-glass-p1';
+              av.className = 'w-12 h-12 rounded-2xl bg-cyan-500 flex items-center justify-center text-2xl shadow-lg shadow-cyan-500/40'; av.textContent = '🚀';
+              txt.innerHTML = `Giliran: <strong class="text-cyan-300">${cur.name}</strong>`;
+            } else {
+              box.className = 'p-4 rounded-2xl border flex flex-col gap-3 space-glass-p2';
+              av.className = 'w-12 h-12 rounded-2xl bg-orange-500 flex items-center justify-center text-2xl shadow-lg shadow-orange-500/40'; av.textContent = '🛸';
+              txt.innerHTML = `Giliran: <strong class="text-orange-300">${cur.name}</strong>`;
+            }
+        }
+
+        const cont = document.getElementById('duel-gameplay-container');
+        cont.innerHTML = '';
+
+        if (round.type === 'match') { this.renderMatchRound(round, cont); }
+        else if (round.type === 'balance') this.renderBalanceRound(round, cont);
+        else if (round.type === 'chisel') this.renderChiselRound(round, cont);
+        else if (round.type === 'vault') this.renderVaultRound(round, cont);
+
+        this.startTimer();
+        soundNarrator.speakCurrentTurn();
+      }
+
+      renderMatchRound(round, container) {
+        const isP1 = round.playerId === 'p1'; const col = isP1 ? 'cyan' : 'orange';
+        const matched = round.data.filter(d=>d.matched).length;
+        container.innerHTML = `
+          <div class="flex justify-between border-b border-slate-700/80 pb-3">
+            <div>
+              <h4 class="font-bold text-${col}-300 flex items-center gap-2"><span>📦</span> ${round.title}</h4>
+              <p class="text-[11px] text-slate-300 pt-1">Cocokkan kargo kiri dengan nilai kanan (posisi acak).</p>
+            </div>
+            <span class="bg-slate-900 border border-${col}-500/50 px-3 py-1 rounded-xl text-xs font-bold self-start">Cocok: ${matched}/${round.data.length}</span>
+          </div>
+          <div id="duel-match-hint" class="text-xs bg-slate-900 border border-slate-700 p-2 rounded text-slate-300 my-2">💡 Tips: Klik 1 kotak kiri lalu pilih nilai yang setara di kanan!</div>
+          <div class="grid grid-cols-2 gap-4">
+            <div id="m-left" class="space-y-2"></div>
+            <div id="m-right" class="space-y-2"></div>
+          </div>
+        `;
+        round.data.forEach(d => {
+          const btn = document.createElement('button');
+          btn.className = d.matched ? 'w-full p-2.5 rounded-xl bg-emerald-950/80 border border-emerald-500/60 text-emerald-200 text-xs font-bold text-left flex justify-between cursor-default' : 
+            (this.selectedLeft === d.id ? `w-full p-2.5 rounded-xl bg-${col}-950 border-2 border-${col}-400 text-white text-xs font-bold text-left flex justify-between shadow-lg` : 'w-full p-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs font-semibold text-left flex justify-between transition cursor-pointer');
+          btn.innerHTML = `<span>${d.label}</span><span>${d.matched ? '✅':'📦'}</span>`;
+          if (!d.matched) btn.onclick = () => { if(!this.isChecking) { soundFx.click(); this.selectedLeft = d.id; this.renderMatchRound(round, container); this.checkDuelMatch(round, container); } };
+          container.querySelector('#m-left').appendChild(btn);
+        });
+        round.targets.forEach(t => {
+          const btn = document.createElement('button');
+          btn.className = t.matched ? 'w-full p-2.5 rounded-xl bg-emerald-950/80 border border-emerald-500/60 text-emerald-200 text-xs font-bold text-left flex justify-between cursor-default' : 
+            (this.selectedRight === t.id ? `w-full p-2.5 rounded-xl bg-amber-950 border-2 border-amber-400 text-white text-xs font-bold text-left flex justify-between shadow-lg` : 'w-full p-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs font-semibold text-left flex justify-between transition cursor-pointer');
+          btn.innerHTML = `<span>${t.label}</span><span>${t.matched ? '✅':'📐'}</span>`;
+          if (!t.matched) btn.onclick = () => { if(!this.isChecking) { soundFx.click(); this.selectedRight = t.id; this.renderMatchRound(round, container); this.checkDuelMatch(round, container); } };
+          container.querySelector('#m-right').appendChild(btn);
+        });
+      }
+
+      checkDuelMatch(round, container) {
+        if (this.roundOver || !this.selectedLeft || !this.selectedRight) return;
+        const l = round.data.find(x => x.id === this.selectedLeft); const r = round.targets.find(x => x.id === this.selectedRight);
+        const hint = container.querySelector('#duel-match-hint');
+        if (l.targetId === r.id) {
+          soundFx.meriah(); l.matched = true; r.matched = true; this.selectedLeft = null; this.selectedRight = null;
+          if(hint) hint.innerHTML = `🎉 <strong>Tepat!</strong> ${l.label} senilai dengan ${r.label}!`;
+          this.renderMatchRound(round, container);
+          if (round.data.every(x => x.matched)) { 
+             this.roundOver = true; this.stopTimer(); const tb = this.remainingTime*2; 
+             soundNarrator.speak(`Hebat ${this.getCurrentPlayer().name}! Semua kargo berhasil dicocokkan.`);
+             setTimeout(() => this.finishCurrentRound(100+tb, 3), 1500); 
+          }
+        } else {
+          soundFx.boom(); this.isChecking = true;
+          if(hint) hint.innerHTML = `⚠️ <strong>Belum cocok!</strong> Periksa tangga satuanmu lagi!`;
+          setTimeout(() => { this.selectedLeft = null; this.selectedRight = null; this.isChecking = false; this.renderMatchRound(round, container); }, 500);
+        }
+      }
+
+      renderBalanceRound(round, container) {
+        const isP1 = round.playerId === 'p1'; const col = isP1 ? 'cyan' : 'orange';
+        let curKg = 0; round.modules.forEach(m => { if (m.used) curKg += m.kg; });
+        const isBal = curKg === round.targetKg;
+        let tilt = 0; if(curKg < round.targetKg) tilt = Math.min(10, Math.max(3, (round.targetKg-curKg)/200)); else if(curKg > round.targetKg) tilt = Math.max(-10, Math.min(-3, (round.targetKg-curKg)/200));
+
+        container.innerHTML = `
+          <div class="flex justify-between border-b border-slate-700/80 pb-3">
+            <div>
+              <h4 class="font-bold text-${col}-300 flex items-center gap-2"><span>⚖️</span> ${round.title}</h4>
+              <p class="text-[11px] text-slate-300 pt-1">Atur modul kanan agar seimbang.</p>
+            </div>
+            <span class="bg-slate-900 border border-${col}-500/50 px-3 py-1 rounded-xl text-xs font-bold self-start">Target: ${round.targetDisplay}</span>
+          </div>
+          <div class="py-6 relative max-w-lg mx-auto">
+            <div class="h-3 bg-gradient-to-r from-blue-500 to-amber-500 rounded-full transition-transform duration-500 relative flex justify-between px-4" style="transform: rotate(${tilt}deg);">
+              <div class="w-20 h-16 -mt-16 -ml-4 bg-slate-900 border-2 border-blue-400 rounded-xl p-2 flex flex-col items-center justify-center shadow-lg"><span class="text-[10px] font-bold text-white">Kiri</span><span class="text-[9px] text-cyan-300 font-bold">${round.targetDisplay}</span></div>
+              <div class="w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-b-[20px] border-b-slate-400 absolute left-1/2 -bottom-5 -translate-x-1/2"></div>
+              <div class="w-24 h-16 -mt-16 -mr-4 bg-slate-900 border-2 border-${col}-400 rounded-xl p-2 flex flex-col items-center justify-center shadow-lg"><span class="text-[10px] font-bold text-white">Kanan</span><span class="text-[9px] text-amber-300 font-bold">${curKg} kg</span></div>
+            </div>
+          </div>
+          <div class="text-center pb-2 text-xs font-bold ${isBal?'text-emerald-400':'text-amber-400'}">${isBal?'✅ SEIMBANG SEMPURNA':(curKg<round.targetKg?'⚠️ Kanan Kurang Berat':'⚠️ Kanan Terlalu Berat')}</div>
+          <div id="m-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
+          <div class="pt-3"><button id="m-sub" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition ${isBal?`bg-${col}-500 text-slate-950 shadow-lg`:'bg-slate-800 text-slate-500'}" ${!isBal?'disabled':''}>Kunci Seimbang ➔</button></div>
+        `;
+        round.modules.forEach(m => {
+          const btn = document.createElement('button');
+          btn.className = m.used ? `p-2 rounded-xl bg-${col}-950 border border-${col}-400 text-center shadow-md` : 'p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-center transition';
+          btn.innerHTML = `<div class="text-xl">${m.icon}</div><div class="text-[10px] font-bold text-white pt-1">${m.label}</div><div class="text-[9px] text-amber-300 font-black">${m.raw}</div>`;
+          btn.onclick = () => { if(this.roundOver) return; soundFx.click(); m.used = !m.used; this.renderBalanceRound(round, container); };
+          container.querySelector('#m-grid').appendChild(btn);
+        });
+        container.querySelector('#m-sub').onclick = () => { 
+           if(isBal && !this.roundOver){ 
+              this.roundOver = true; this.stopTimer(); soundFx.meriah(); 
+              soundNarrator.speak(`Luar biasa ${this.getCurrentPlayer().name}! Sayap roket kini seimbang.`);
+              setTimeout(() => this.finishCurrentRound(100+(this.remainingTime*2), 3), 1500); 
+           } 
+        };
+      }
+
+      renderChiselRound(round, container) {
+        const isP1 = round.playerId === 'p1'; const col = isP1 ? 'cyan' : 'orange';
+        const c = round.crystals; const tot = c.c1.current + c.c2.current + c.c3.current; const perf = tot === round.limitGram;
+        
+        container.innerHTML = `
+          <div class="flex justify-between border-b border-slate-700/80 pb-3">
+            <div>
+              <h4 class="font-bold text-${col}-300 flex items-center gap-2"><span>💎</span> ${round.title}</h4>
+              <p class="text-[11px] text-slate-300 pt-1">Pilih 1 laser kristal yang paling tepat agar pas target beban.</p>
+            </div>
+            <span class="bg-slate-900 border border-${col}-500/50 px-3 py-1 rounded-xl text-xs font-bold self-start">Target: ${round.limitGram} g</span>
+          </div>
+          <div class="text-center py-4"><div class="heading-font text-3xl font-black ${perf?'text-emerald-400':'text-amber-400'}">${tot.toLocaleString('id-ID')} g</div><div class="text-[10px] pt-1 ${perf?'text-emerald-400':'text-rose-400'}">${perf?'✅ BEBAN PAS':`⚠️ Selisih ${Math.abs(round.limitGram-tot)} g dari target`}</div></div>
+          
+          <div class="grid grid-cols-3 gap-2">
+            ${['c1','c2','c3'].map((k, idx) => {
+              const cutVal = round.cutOptions[idx];
+              return `
+                <button id="c-${k}" class="p-3 rounded-2xl bg-slate-900 border border-slate-700 text-center cursor-pointer transition hover:bg-slate-800">
+                  <div class="text-2xl animate-pulse">✨</div>
+                  <div class="text-[10px] font-bold text-white pt-1">${c[k].name}</div>
+                  <div class="text-[11px] font-black text-amber-300">${c[k].current} g</div>
+                  <div class="mt-2 py-1.5 bg-rose-900/50 hover:bg-rose-700 border border-rose-500 text-[10px] font-bold text-rose-200 rounded-lg shadow-md transition">⚡ Potong ${cutVal}g</div>
+                </button>
+              `;
+            }).join('')}
+          </div>
+          
+          <div class="flex gap-2 pt-3">
+            <button id="c-res" class="w-1/3 py-2.5 rounded-xl bg-slate-800 text-xs">Reset</button>
+            <button id="c-sub" class="w-2/3 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition ${perf?`bg-${col}-500 text-slate-950 shadow-lg`:'bg-slate-800 text-slate-500'}" ${!perf?'disabled':''}>Kunci Beban ➔</button>
+          </div>
+        `;
+
+        ['c1','c2','c3'].forEach((k, idx) => {
+          container.querySelector(`#c-${k}`).onclick = () => { 
+            if(this.roundOver) return; 
+            if(!c[k].chiseled){ 
+              soundFx.laser(); 
+              c[k].current -= round.cutOptions[idx]; 
+              c[k].chiseled=true; 
+              this.renderChiselRound(round,container); 
+            } 
+          };
+        });
+        
+        container.querySelector('#c-res').onclick = () => { 
+            if(this.roundOver) return;
+            soundFx.click();
+            ['c1','c2','c3'].forEach(k=>{ c[k].current=c[k].initial; c[k].chiseled=false; }); 
+            this.renderChiselRound(round,container); 
+        };
+        
+        container.querySelector('#c-sub').onclick = () => { 
+           if(perf && !this.roundOver){ 
+              this.roundOver = true; this.stopTimer(); soundFx.meriah(); 
+              soundNarrator.speak(`Akurasi sempurna ${this.getCurrentPlayer().name}! Berat sampel sudah tepat.`);
+              setTimeout(() => this.finishCurrentRound(100+(this.remainingTime*2), 3), 1500); 
+           } 
+        };
+      }
+
+      renderVaultRound(round, container) {
+        const isP1 = round.playerId === 'p1'; const col = isP1 ? 'cyan' : 'orange'; const len = round.answer.length;
+        container.innerHTML = `
+          <div class="flex justify-between border-b border-slate-700/80 pb-3 mb-4">
+            <div>
+              <h4 class="font-bold text-${col}-300 flex items-center gap-2"><span>🔐</span> ${round.title}</h4>
+            </div>
+            <span class="bg-slate-900 border border-${col}-500/50 px-3 py-1 rounded-xl text-xs font-bold self-start">Sandi ${len} Digit</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 text-xs leading-relaxed space-y-2">
+              <div class="text-amber-300 font-bold mb-1">📜 Soal Brankas:</div>
+              <div class="text-slate-200">${round.questionHtml}</div>
+              ${round.hint ? `<div class="p-2 bg-sky-950/50 text-[10px] text-sky-200 rounded border border-sky-500/30">💡 Petunjuk: ${round.hint}</div>` : ''}
+            </div>
+            <div class="bg-slate-950 border border-${col}-500/40 p-4 rounded-xl text-center max-w-[240px] mx-auto w-full shadow-lg shadow-${col}-900/20">
+              <div class="bg-slate-900 border-2 border-${col}-400 rounded-xl py-2 mb-3"><span class="heading-font text-2xl tracking-[0.4em] font-black text-emerald-400">${this.vaultInput.padEnd(len, '_')}</span></div>
+              <div class="grid grid-cols-3 gap-1.5">
+                ${[1,2,3,4,5,6,7,8,9].map(k => `<button data-k="${k}" class="vk py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm transition active:scale-95">${k}</button>`).join('')}
+                <button data-k="C" class="vk py-2 rounded-xl bg-rose-900/50 border border-rose-500/50 text-rose-200 font-bold text-[10px] transition active:scale-95">HAPUS</button>
+                <button data-k="0" class="vk py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm transition active:scale-95">0</button>
+                <button data-k="OK" class="vk py-2 rounded-xl bg-${col}-600 text-slate-950 font-bold text-[10px] transition active:scale-95 shadow-md shadow-${col}-500/30">BUKA🔓</button>
+              </div>
+            </div>
+          </div>
+        `;
+        container.querySelectorAll('.vk').forEach(btn => btn.onclick = () => {
+          if (this.roundOver) return;
+          const k = btn.getAttribute('data-k'); soundFx.click();
+          if(k==='C') this.vaultInput = '';
+          else if(k==='OK') {
+            if(this.vaultInput === round.answer) { 
+               this.roundOver = true; this.stopTimer(); soundFx.meriah(); 
+               soundNarrator.speak(`Sandi benar! Selamat ${this.getCurrentPlayer().name}, brankas berhasil dibuka!`);
+               setTimeout(() => this.finishCurrentRound(120+(this.remainingTime*2), 3), 1500); 
+            }
+            else { soundFx.boom(); this.vaultInput = ''; }
+          }
+          else if(this.vaultInput.length < len) this.vaultInput += k;
+          this.renderVaultRound(round, container);
+        });
+      }
+
+      finishCurrentRound(pts, stars) {
+        if (this.getCurrentPlayer().lives <= 0) return this.showVictoryScreen(); 
+        const cur = this.getCurrentPlayer(); cur.score += pts; cur.stars += stars;
+        this.currentRoundIndex++; this.checkPlanetProgressOrLoad();
+      }
+
+      checkPlanetProgressOrLoad() {
+        const marsLimit = this.gameMode === 'solo' ? 4 : 8;
+        const venusLimit = this.gameMode === 'solo' ? 8 : 16;
+        if (this.currentRoundIndex === marsLimit) this.showMarsTransitScreen();
+        else if (this.currentRoundIndex === venusLimit) this.showVenusTransitScreen();
+        else if (this.currentRoundIndex >= this.activeRounds.length) this.showVictoryScreen();
+        else this.loadCurrentRound();
+      }
+
+      showMarsTransitScreen() {
+        soundFx.meriah(); document.getElementById('screen-duel-arena').classList.add('hidden'); document.getElementById('screen-duel-transit-mars').classList.remove('hidden');
+        document.getElementById('transit-mars-p1-name').textContent = this.players.p1.name; document.getElementById('transit-mars-p1-score').textContent = this.players.p1.score;
+        if(this.gameMode === 'solo') { document.getElementById('transit-mars-p2-card').style.display='none'; document.getElementById('transit-mars-grid').className='grid grid-cols-1 gap-3 max-w-xs mx-auto text-left text-xs bg-slate-950/80 p-4 rounded-2xl border border-slate-800'; }
+        else { document.getElementById('transit-mars-p2-card').style.display='block'; document.getElementById('transit-mars-p2-name').textContent = this.players.p2.name; document.getElementById('transit-mars-p2-score').textContent = this.players.p2.score; }
+        
+        if (this.gameMode === 'solo') soundNarrator.speak(`Selamat ${this.players.p1.name}! Kunci pertama Bumi terbuka! Siap menuju Planet Mars!`);
+        else soundNarrator.speak(`Selamat ${this.players.p1.name} dan ${this.players.p2.name}, kunci pertama Bumi terbuka! Siap menuju Planet Mars!`);
+      }
+      launchMarsSector() { soundFx.click(); document.getElementById('screen-duel-transit-mars').classList.add('hidden'); document.getElementById('screen-duel-arena').classList.remove('hidden'); this.loadCurrentRound(); }
+
+      showVenusTransitScreen() {
+        soundFx.meriah(); document.getElementById('screen-duel-arena').classList.add('hidden'); document.getElementById('screen-duel-transit-venus').classList.remove('hidden');
+        document.getElementById('transit-venus-p1-name').textContent = this.players.p1.name; document.getElementById('transit-venus-p1-score').textContent = this.players.p1.score;
+        if(this.gameMode === 'solo') { document.getElementById('transit-venus-p2-card').style.display='none'; document.getElementById('transit-venus-grid').className='grid grid-cols-1 gap-3 max-w-xs mx-auto text-left text-xs bg-slate-950/80 p-4 rounded-2xl border border-slate-800'; }
+        else { document.getElementById('transit-venus-p2-card').style.display='block'; document.getElementById('transit-venus-p2-name').textContent = this.players.p2.name; document.getElementById('transit-venus-p2-score').textContent = this.players.p2.score; }
+        
+        if (this.gameMode === 'solo') soundNarrator.speak(`Kamu hebat ${this.players.p1.name}! Kunci kedua Mars terbuka! Warp menuju Planet Venus diaktifkan!`);
+        else soundNarrator.speak(`Kalian hebat ${this.players.p1.name} dan ${this.players.p2.name}! Kunci kedua Mars terbuka! Warp menuju Planet Venus diaktifkan!`);
+      }
+      launchVenusSector() { soundFx.click(); document.getElementById('screen-duel-transit-venus').classList.add('hidden'); document.getElementById('screen-duel-arena').classList.remove('hidden'); this.loadCurrentRound(); }
+
+      getWinner() {
+        if (this.players.p1.knockedOut && !this.players.p2.knockedOut) return this.players.p2;
+        if (this.players.p2.knockedOut && !this.players.p1.knockedOut) return this.players.p1;
+        if (this.players.p1.score > this.players.p2.score) return this.players.p1;
+        if (this.players.p2.score > this.players.p1.score) return this.players.p2;
+        return 'draw';
+      }
+
+      showVictoryScreen() {
+        this.stopTimer(); 
+        const isGameOver = this.gameMode === 'solo' ? this.players.p1.lives <= 0 : (this.players.p1.lives <= 0 || this.players.p2.lives <= 0);
+        
+        if (isGameOver) { soundFx.boom(); } else { soundFx.meriah(); }
+
+        ['screen-duel-arena','screen-duel-transit-mars','screen-duel-transit-venus','timeout-alert-banner'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+        document.getElementById('screen-duel-victory').classList.remove('hidden');
+        
+        document.getElementById('podium-p1-name').textContent = this.players.p1.name; document.getElementById('podium-p1-class').textContent = this.players.p1.grade;
+        document.getElementById('podium-p1-score').textContent = this.players.p1.score; document.getElementById('podium-p1-stars').textContent = `${this.players.p1.stars} ⭐`;
+        
+        if(this.gameMode === 'solo') {
+            document.getElementById('podium-card-p2').style.display = 'none'; document.getElementById('podium-grid').className = 'grid grid-cols-1 gap-3 max-w-sm mx-auto text-left text-xs';
+            
+            if (this.players.p1.lives <= 0) {
+                document.getElementById('duel-winner-heading').textContent = `GAME OVER! 💀`; 
+                document.getElementById('duel-winner-desc').textContent = `Misi gagal karena kamu kehabisan nyawa! Kamu tidak bisa lanjut ke planet berikutnya.`;
+                document.getElementById('podium-p1-rank').textContent = 'GUGUR';
+                soundNarrator.speak(`Game over! ${this.players.p1.name} kehabisan nyawa. Semangat belajar lagi ya!`);
+            } else {
+                document.getElementById('duel-winner-heading').textContent = `MISI SELESAI! 🥇`; 
+                document.getElementById('duel-winner-desc').textContent = `Perekapan skor poin dan bintang prestasi dari ketiga planet telah selesai!`;
+                document.getElementById('podium-p1-rank').textContent = 'KAPTEN';
+                soundNarrator.speak(`Selamat ${this.players.p1.name}! Seluruh ekspedisi berhasil kamu taklukkan! Kamu adalah kapten sejati!`);
+                
+                // MUNCULKAN GEM BAHAN BAKAR SETELAH 6.5 DETIK JEDA
+                setTimeout(() => {
+                    document.getElementById('fuel-emergency-overlay').classList.remove('hidden');
+                    soundNarrator.speak(`Peringatan Kapten ${this.players.p1.name}! Bahan bakar untuk kembali ke Bumi kosong. Segera temui Robot Warak untuk mengolah sampah menjadi bahan bakar!`);
+                }, 6500);
+            }
+        } else {
+            document.getElementById('podium-card-p2').style.display = 'block'; document.getElementById('podium-grid').className = 'grid grid-cols-2 gap-3 sm:gap-4 text-left text-xs';
+            document.getElementById('podium-p2-name').textContent = this.players.p2.name; document.getElementById('podium-p2-class').textContent = this.players.p2.grade;
+            document.getElementById('podium-p2-score').textContent = this.players.p2.score; document.getElementById('podium-p2-stars').textContent = `${this.players.p2.stars} ⭐`;
+            
+            const w = this.getWinner();
+            if(w === 'draw') { 
+                document.getElementById('duel-winner-heading').textContent = 'SERI KUAT! 🤝'; 
+                document.getElementById('duel-winner-desc').textContent = `Perekapan skor poin dan bintang prestasi dari ketiga planet telah selesai!`;
+                document.getElementById('podium-p1-rank').textContent = 'JUARA BERSAMA'; document.getElementById('podium-p2-rank').textContent = 'JUARA BERSAMA'; 
+                soundNarrator.speak('Pertandingan berakhir imbang dengan skor sama kuat! Selamat untuk kedua astronaut hebat!');
+            } else { 
+                document.getElementById('duel-winner-heading').textContent = `JUARA: ${w.name.toUpperCase()}! 🥇`; 
+                if (this.players.p1.lives <= 0 || this.players.p2.lives <= 0) {
+                    document.getElementById('duel-winner-desc').textContent = `Pertandingan dihentikan karena lawan kehabisan nyawa dan gugur!`;
+                } else {
+                    document.getElementById('duel-winner-desc').textContent = `Perekapan skor poin dan bintang prestasi dari ketiga planet telah selesai!`;
+                }
+                document.getElementById(w===this.players.p1?'podium-p1-rank':'podium-p2-rank').textContent = 'JUARA 1'; 
+                document.getElementById(w===this.players.p1?'podium-p2-rank':'podium-p1-rank').textContent = (this.players.p1.lives <= 0 || this.players.p2.lives <= 0) ? 'GUGUR' : 'RUNNER UP'; 
+                soundNarrator.speak(`Selamat kepada ${w.name}! Kamu resmi dinobatkan sebagai Juara Tertinggi Galaksi!`);
+            }
+        }
+      }
+
+      rematch() { soundFx.click(); document.getElementById('duel-register-form').dispatchEvent(new Event('submit')); }
+    }
+    const duelGame = new DuelGame();
+    duelGame.updatePortalLocks();
+
+    // FUNGSI UNTUK MEMBUKA KUNCI AUDIO & MENYAPA MURID
+    function unlockGameSystem() {
+      soundFx.init(); // Membuka kunci AudioContext di browser
+      soundFx.click(); // Suara klik pertama agar sistem audio aktif
+      
+      const overlay = document.getElementById('audio-unlock-overlay');
+      if (overlay) {
+        overlay.classList.add('opacity-0'); // Animasi memudar
+        setTimeout(() => overlay.remove(), 500); // Hapus layar dari HTML
+      }
+      
+      // Robot Warak langsung menyapa dengan lore baru
+      setTimeout(() => {
+        soundNarrator.speak("Halo Kadet! Saya Robot Warak buatan Bu Guru Atika dari SDN Karanganyar Gunung 02 Semarang. Saya akan memandu kalian di roket berbahan bakar sampah ini untuk memasang satelit masa depan. Silakan pilih menu Tujuan Belajar untuk memulai!");
+      }, 400);
+    }
+
+    /* BINTANG LATAR */
+    (function initStarfield() {
+      const c = document.getElementById('starfield'); if (!c) return; const ctx = c.getContext('2d'); let stars = [];
+      const resize = () => { c.width = window.innerWidth; c.height = window.innerHeight; stars = []; for (let i = 0; i < 120; i++) stars.push({ x: Math.random() * c.width, y: Math.random() * c.height, r: Math.random() * 1.5 + 0.5, speed: Math.random() * 0.4 + 0.1, alpha: Math.random() * 0.8 + 0.2 }); };
+      const draw = () => { ctx.clearRect(0, 0, c.width, c.height); ctx.fillStyle = '#ffffff'; stars.forEach(s => { ctx.globalAlpha = s.alpha; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill(); s.y += s.speed; if (s.y > c.height) { s.y = 0; s.x = Math.random() * c.width; } }); requestAnimationFrame(draw); };
+      window.addEventListener('resize', resize); resize(); draw();
+    })();
+  </script>
+</body>
+</html>
